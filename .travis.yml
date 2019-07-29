@@ -1,0 +1,48 @@
+language: go
+
+sudo: false
+
+os:
+  - linux
+  - osx
+
+go:
+  - 1.11.x
+  - 1.12.x
+  - master
+
+env:
+  - GO111MODULE=on
+  # needed for docker deploy:
+  - DOCKER_USER=vivino
+
+# needed for the docker pipe
+services:
+  - docker
+
+
+script:
+ - diff <(gofmt -d .) <(printf "")
+ - go test -v ./...
+ - go test -cpu=1,2,4 -short -race ./...
+ - GOOS=linux GOARCH=386 go install ./...
+
+matrix:
+  allow_failures:
+    - go: 'master'
+  fast_finish: true
+
+after_success:
+  # docker login is required if you want to push docker images.
+  # DOCKER_PASSWORD should be a secret in your .travis.yml configuration.
+  - test -n "$TRAVIS_TAG" && docker login -u="$DOCKER_USER" -p="$DOCKER_PASSWORD"
+
+# calls goreleaser
+deploy:
+  - provider: script
+    skip_cleanup: true
+    script: curl -sL https://git.io/goreleaser | bash
+    on:
+      tags: true
+      condition: $TRAVIS_OS_NAME = linux
+

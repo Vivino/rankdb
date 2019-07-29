@@ -1,0 +1,172 @@
+# RankDB API configuration
+
+# ListenAddress specifies the host and port to listen to.
+ListenAddress = ":8080"
+
+# MasterSet provides the set where the master lists are stored.
+MasterSet = "rankdb"
+
+# Storage backend to use.
+# Currently available are: "Memory", "Badger", "Aerospike" and "BoltDB".
+Storage = "Badger"
+
+# CacheEntries are the number of list segments to keep in memory.
+CacheEntries = 10000
+
+# CacheType defines the cache type. Can be "ARC", "LRU" or "LRU2Q".
+CacheType = "ARC"
+
+# Master List save frequency.
+SaveEvery = "1m"
+
+# Prune lists without "Load Index" this often.
+PruneEvery = "1h"
+
+# Maximum time to wait for each stage to complete shutdown.
+ShutdownStageWait = "1m"
+
+# Maximum time to wait for requests to finish before shutting down.
+ShutdownRequestWait = "15s"
+
+# JwtKeyPath provides the path to public JWT keys that provides access to the API
+# if enabled.
+JwtKeyPath = ""
+
+# Debug will override the commandline debug flag.
+Debug = true
+
+# ColourLogs will enable colors to logging.
+ColourLogs = true
+
+# TimestampLogs will add time to logs.
+TimestampLogs = true
+
+# LogInfo will enable output of INFO messages.
+LogInfo = true
+
+# ReadTimeout is the maximum duration for reading the entire request, including the body.
+ReadTimeout = "10m"
+
+# ReadHeaderTimeout is the amount of time allowed to read request headers.
+ReadHeaderTimeout = "1s"
+
+# WriteTimeout is the maximum duration before timing out writes of the response.
+# It is reset whenever a new request's header is read.
+WriteTimeout = "10m"
+
+# IdleTimeout is the maximum amount of time to wait for the  next request when keep-alives are enabled.
+# If IdleTimeout is zero, the value of ReadTimeout is used.
+# If both are zero, ReadHeaderTimeout is used.
+IdleTimeout = "10s"
+
+# MaxUpdates is the maximum number of concurrently running updates.
+# New updates will be queued until there is a spot.
+MaxUpdates = 8
+
+# BackupStorage is the storage used for keeping master list backup.
+# This will be used if the master list should become corrupted.
+# This can be a specific storage instance or "Master" to use the master storage defined in "Storage".
+# Backups will bypass the Lazy Writer, but will have StorageRetry enabled.
+BackupStorage = "Master"
+
+# BackupSet will be the set used to store the master list backup.
+# Using the same set as master storage is allowed.
+BackupSet = "rankdb-backup"
+
+# BackupEvery will back up the master list on every n writes.
+# Backup Frequency will then be SaveEvery x BackupEvery.
+BackupEvery = 10
+
+
+[Aerospike]
+# Comma separated list of aerospike hosts.
+# If no ports are specified, port 3000 is assumed.
+Hosts = ""
+# Namespace used for storage.
+Namespace = "api"
+# Must match write-block-size of server.
+# See http://www.aerospike.com/docs/reference/configuration#write-block-size
+WriteBlockSize = 1048576
+
+[Badger]
+# Path to store badger files.
+Path = "./data"
+
+# Setting the NoSync flag will cause the database to skip fsync() calls after each commit.
+# Can lead to data loss on crashes.
+NoSync = true
+
+
+[BoltDB]
+# Path and file name of Bolt DB file.
+FilePath = "data/rankdb.bolt"
+
+# Setting the NoSync flag will cause the database to skip fsync() calls after each commit.
+# Can lead to data loss on crashes.
+NoSync = true
+
+# When true, skips the truncate call when growing the database.
+# Setting this to true is only safe on non-ext3/ext4 systems.
+NoGrowSync = false
+
+[AWS]
+Enabled = false
+
+# Specify the region to use.
+Region = ""
+
+# URL to object storage service.
+# Leave blank to use standard AWS endpoint.
+S3Endpoint = ""
+
+# Access keys can be specified here, or be picked up from environment:
+# * Access Key ID: AWS_ACCESS_KEY_ID or AWS_ACCESS_KEY
+# * Secret Access Key: AWS_SECRET_ACCESS_KEY or AWS_SECRET_KEY
+# If running on an EC2 instance credentials will also be attempted to be picked up there.
+# These config values take priority.
+AccessKey = ""
+SecretKey = ""
+
+[LazySaver]
+# Master switch
+Enabled = true
+
+# Maximum time an object will be kept before it is flushed.
+MaxTime = "10s"
+
+# Begin flushing when this number of objects are stored.
+FlushAtItems = 9000
+
+# Maximum number of items stored before writes will block.
+LimitItems = 10000
+
+# Number of async savers for queued Set/Delete operations.
+Savers = 8
+
+# Timeout for each write.
+SaveTimeout = "1h"
+
+# Debug enables detailed output.
+Debug = false
+
+[StorageRetry]
+# Enable retries of operations with exponential backoff.
+Enabled = true
+
+# OpTimeout defines the deadline for each retry operation.
+OpTimeout = "1s"
+
+[NewRelic]
+AppName = "rankdb"
+License = ""
+# TxTracerThreshold controls whether a transaction trace will be
+# considered for capture.  Of the traces exceeding the
+# threshold, the slowest trace every minute is captured.
+TxTracerThreshold = "100ms"
+# Attributes controls the attributes included with errors and
+# transaction events.
+ExcludeAttributes = ["password","header_Authorization","header_Cookie"]
+# HostDisplayName gives this server a recognizable name in the New
+# Relic UI.  This is an optional setting.
+HostDisplayName = ""
+

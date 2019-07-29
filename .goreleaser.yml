@@ -1,0 +1,71 @@
+# Make sure to check the documentation at http://goreleaser.com
+
+project_name: rankdb
+
+env:
+  - CGO_ENABLED=0
+  - GO111MODULE=on
+
+before:
+  hooks:
+    - go mod download
+
+builds:
+  -
+    main: ./cmd/rankdb/main.go
+    binary: rankdb
+    goos:
+      - linux
+      - windows
+      - darwin
+      - freebsd
+    goarch:
+      - amd64
+      - arm64
+    goarm:
+      - 6
+      - 7
+  -
+    id: rankdb-cli
+    main: ./api/tool/rankdb-cli/main.go
+    binary: rankdb-cli
+    goos:
+      - linux
+      - windows
+      - darwin
+      - freebsd
+    goarch:
+      - amd64
+      - arm64
+    goarm:
+      - 6
+      - 7
+
+archives:
+  -
+    replacements:
+      darwin: Darwin
+      linux: Linux
+      windows: Windows
+      amd64: x86_64
+    format_overrides:
+      - goos: windows
+        format: zip
+    files:
+      - conf/conf.stub.toml
+      - api/swagger/swagger.json
+      - api/swagger/swagger.yaml
+      - api/public/swagger/*
+      - LICENSE
+      - README.md
+
+checksum:
+  name_template: 'checksums.txt'
+snapshot:
+  name_template: "{{ .Tag }}-next"
+changelog:
+  sort: asc
+  filters:
+    exclude:
+    - '^docs:'
+    - '^test:'

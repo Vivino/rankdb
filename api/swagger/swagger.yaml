@@ -1,0 +1,3132 @@
+consumes:
+- application/json
+- application/msgpack
+definitions:
+  BackupDestination:
+    example:
+      path: ./backup.bin
+      server_list_id_prefix: Molestiae aspernatur mollitia commodi id deserunt.
+      server_list_id_suffix: Reiciendis voluptate ea id aperiam nulla.
+      type: file
+    properties:
+      path:
+        description: |-
+          Specifies the destination path.
+          If type is server, this should be ip+port of the other server, eg. 10.0.0.1:8080.
+          If the type is s3, the source should be specified as s3://bucket/path/file.bin. Replace bucket and path+file
+        example: ./backup.bin
+        type: string
+      server_list_id_prefix:
+        description: |-
+          Optional alternative list id prefix for server-to-server transfers.
+          If not provided the original list id/segment ids will be used and any existing list will be overwritten.
+        example: Molestiae aspernatur mollitia commodi id deserunt.
+        type: string
+      server_list_id_suffix:
+        description: |-
+          Optional alternative list id suffix for server-to-server transfers.
+          If not provided the original list id/segment ids will be used and any existing list will be overwritten.
+        example: Reiciendis voluptate ea id aperiam nulla.
+        type: string
+      type:
+        description: Specifies the destination type of the backup. Can be 'file' 'download',
+          's3' or 'server'
+        example: file
+        type: string
+    required:
+    - type
+    title: BackupDestination
+    type: object
+  Element:
+    example:
+      id: 100
+      payload:
+        country: dk
+        name: Mark Anthony
+      score: 100
+      tie_breaker: 2000
+    properties:
+      id:
+        description: ID of element
+        example: 100
+        minimum: 0
+        type: integer
+      payload:
+        additionalProperties: true
+        description: Custom payload. Stored untouched. On updates null means do not
+          update. `{}` is the empty value.
+        example:
+          country: dk
+          name: Mark Anthony
+        type: object
+      score:
+        description: Score of the element. Higher score gives higher placement.
+        example: 100
+        minimum: 0
+        type: integer
+      tie_breaker:
+        description: Tie breaker, used if score matches for consistent sorting. Higher
+          value = higher placement if score is equal.
+        example: 2000
+        maximum: 4.2949673e+09
+        minimum: 0
+        type: integer
+    required:
+    - id
+    - score
+    title: Element
+    type: object
+  ListPayloadQL:
+    example:
+      all_in_sets:
+      - storage-set
+      - backup-set
+      lists:
+      - highscore-dk-all
+      - highscore-uk-all
+      match_metadata:
+        country: dk
+      payload:
+      - id: 100
+        payload:
+          country: dk
+          name: Mark Anthony
+        score: 100
+        tie_breaker: 2000
+    properties:
+      all_in_sets:
+        description: Include all lists in these sets
+        example:
+        - storage-set
+        - backup-set
+        items:
+          example: Voluptas dolorum fugiat quibusdam perferendis qui ducimus.
+          type: string
+        type: array
+      lists:
+        description: Include lists that match exact list names
+        example:
+        - highscore-dk-all
+        - highscore-uk-all
+        items:
+          example: Cum odit minima debitis beatae quidem quis.
+          type: string
+        type: array
+      match_metadata:
+        additionalProperties: true
+        description: Include lists that match all values in metadata
+        example:
+          country: dk
+        type: object
+      payload:
+        description: |-
+          Payloads for create/update functions.
+          Will be ignored on deletes.
+        example:
+        - id: 100
+          payload:
+            country: dk
+            name: Mark Anthony
+          score: 100
+          tie_breaker: 2000
+        items:
+          $ref: '#/definitions/Element'
+        type: array
+    title: ListPayloadQL
+    type: object
+  ListQL:
+    example:
+      all_in_sets:
+      - storage-set
+      - backup-set
+      lists:
+      - highscore-dk-all
+      - highscore-uk-all
+      match_metadata:
+        country: dk
+    properties:
+      all_in_sets:
+        description: Include all lists in these sets
+        example:
+        - storage-set
+        - backup-set
+        items:
+          example: Dolores sint modi voluptas totam sequi nihil.
+          type: string
+        type: array
+      lists:
+        description: Include lists that match exact list names
+        example:
+        - highscore-dk-all
+        - highscore-uk-all
+        items:
+          example: Est quo ea sapiente autem.
+          type: string
+        type: array
+      match_metadata:
+        additionalProperties: true
+        description: Include lists that match all values in metadata
+        example:
+          country: dk
+        type: object
+    title: ListQL
+    type: object
+  MultiElement:
+    example:
+      element_ids:
+      - 120
+      - 340
+      - 550
+    properties:
+      element_ids:
+        description: IDs of elements
+        example:
+        - 120
+        - 340
+        - 550
+        items:
+          description: Element ID
+          example: 100
+          minimum: 0
+          type: integer
+        type: array
+    required:
+    - element_ids
+    title: MultiElement
+    type: object
+  MultiListBackup:
+    example:
+      destination:
+        path: ./backup.bin
+        server_list_id_prefix: Molestiae aspernatur mollitia commodi id deserunt.
+        server_list_id_suffix: Reiciendis voluptate ea id aperiam nulla.
+        type: file
+      lists:
+        all_in_sets:
+        - storage-set
+        - backup-set
+        lists:
+        - highscore-dk-all
+        - highscore-uk-all
+        match_metadata:
+          country: dk
+    properties:
+      destination:
+        $ref: '#/definitions/BackupDestination'
+      lists:
+        $ref: '#/definitions/ListQL'
+    required:
+    - destination
+    - lists
+    title: MultiListBackup
+    type: object
+  PutMultiElementsPayload:
+    example:
+    - id: 100
+      payload:
+        country: dk
+        name: Mark Anthony
+      score: 100
+      tie_breaker: 2000
+    - id: 100
+      payload:
+        country: dk
+        name: Mark Anthony
+      score: 100
+      tie_breaker: 2000
+    - id: 100
+      payload:
+        country: dk
+        name: Mark Anthony
+      score: 100
+      tie_breaker: 2000
+    items:
+      $ref: '#/definitions/Element'
+    title: PutMultiElementsPayload
+    type: array
+  RankList:
+    example:
+      id: highscore-list
+      load_index: false
+      merge_size: 500
+      metadata:
+        country: dk
+        game: "2"
+      populate:
+      - id: 100
+        payload:
+          country: dk
+          name: Mark Anthony
+        score: 100
+        tie_breaker: 2000
+      - id: 100
+        payload:
+          country: dk
+          name: Mark Anthony
+        score: 100
+        tie_breaker: 2000
+      set: storage-set
+      split_size: 2000
+    properties:
+      id:
+        description: |-
+          The ID of the list to apply the operation on.
+          Can be `a` to `z` (both upper/lower case), `0` to `9` or one of these characters `_-.`
+        example: highscore-list
+        maxLength: 100
+        minLength: 2
+        pattern: ^[a-zA-Z0-9-_.]+$
+        type: string
+      load_index:
+        default: false
+        description: Load Index on server startup
+        example: false
+        type: boolean
+      merge_size:
+        default: 500
+        description: Merge adjacent Segments with less than this number of entries
+        example: 500
+        maximum: 100000
+        minimum: 10
+        type: integer
+      metadata:
+        additionalProperties: true
+        description: Custom metadata. String to String hash.
+        example:
+          country: dk
+          game: "2"
+        type: object
+      populate:
+        description: Populate list with specified elements
+        example:
+        - id: 100
+          payload:
+            country: dk
+            name: Mark Anthony
+          score: 100
+          tie_breaker: 2000
+        - id: 100
+          payload:
+            country: dk
+            name: Mark Anthony
+          score: 100
+          tie_breaker: 2000
+        items:
+          $ref: '#/definitions/Element'
+        type: array
+      set:
+        description: Set used for storage
+        example: storage-set
+        maxLength: 100
+        minLength: 2
+        type: string
+      split_size:
+        default: 2000
+        description: Split Segments larger than this number of entries
+        example: 2000
+        maximum: 100000
+        minimum: 10
+        type: integer
+    required:
+    - id
+    - set
+    title: RankList
+    type: object
+  RankdbBackup_status:
+    description: Backup Information (default view)
+    example:
+      cancelled: false
+      custom:
+        Officiis rerum qui dolor atque ut.: Quam sunt reprehenderit quasi ipsa doloribus
+          maiores.
+      done: false
+      errors:
+        highscore-dk-all: not found
+      finished: 2000-09-09T16:20:50Z
+      lists: 8.4092936e+18
+      lists_done: 6.3959064e+18
+      size: 6.170197e+18
+      started: 1993-04-08T06:51:59Z
+      storage: Adipisci officiis architecto quisquam quia.
+      uri: Neque nostrum quisquam nulla deleniti.
+    properties:
+      cancelled:
+        description: Will be true if backup was cancelled
+        example: false
+        type: boolean
+      custom:
+        additionalProperties: true
+        description: Custom information provided by backup
+        example:
+          Officiis rerum qui dolor atque ut.: Quam sunt reprehenderit quasi ipsa doloribus
+            maiores.
+        type: object
+      done:
+        description: Will be true when the backup has finished processing
+        example: false
+        type: boolean
+      errors:
+        additionalProperties: true
+        description: Failed operations, indexed by list IDs
+        example:
+          highscore-dk-all: not found
+        type: object
+      finished:
+        description: Time backup was finished
+        example: 2000-09-09T16:20:50Z
+        format: date-time
+        type: string
+      lists:
+        description: Number of lists to be backed up
+        example: 8.4092936e+18
+        format: int64
+        type: integer
+      lists_done:
+        description: Number of lists backed up now
+        example: 6.3959064e+18
+        format: int64
+        type: integer
+      size:
+        description: Size of stored data
+        example: 6.170197e+18
+        format: int64
+        type: integer
+      started:
+        description: Time backup was started
+        example: 1993-04-08T06:51:59Z
+        format: date-time
+        type: string
+      storage:
+        description: Storage used for backup
+        example: Adipisci officiis architecto quisquam quia.
+        type: string
+      uri:
+        description: URI of backed up content. Used for restore.
+        example: Neque nostrum quisquam nulla deleniti.
+        type: string
+    required:
+    - done
+    - cancelled
+    - lists
+    - storage
+    - size
+    - uri
+    - started
+    - lists_done
+    title: 'Mediatype identifier: application/vnd.rankdb.backup_status+json; view=default'
+    type: object
+  RankdbCallback:
+    description: Backup Information (default view)
+    example:
+      callback_url: Omnis quae itaque commodi.
+      id: Perspiciatis dolore laudantium ut alias quos.
+    properties:
+      callback_url:
+        example: Omnis quae itaque commodi.
+        type: string
+      id:
+        example: Perspiciatis dolore laudantium ut alias quos.
+        type: string
+    required:
+    - id
+    - callback_url
+    title: 'Mediatype identifier: application/vnd.rankdb.callback+json; view=default'
+    type: object
+  RankdbElement:
+    description: List Element (default view)
+    example:
+      from_bottom: 4000
+      from_top: 50
+      id: 100
+      list_id: highscore-list
+      payload:
+        country: dk
+        name: Mark Anthony
+      score: 100
+      tie_breaker: 2000
+      updated_at: 1996-11-22T14:02:34Z
+    properties:
+      from_bottom:
+        description: |-
+          Element rank in list from bottom.
+           Bottom element has value 0.
+        example: 4000
+        format: int64
+        type: integer
+      from_top:
+        description: |-
+          Element rank in list from top.
+           Top element has value 0.
+        example: 50
+        format: int64
+        type: integer
+      id:
+        description: ID of element
+        example: 100
+        minimum: 0
+        type: integer
+      list_id:
+        description: |-
+          The ID of the list to apply the operation on.
+          Can be `a` to `z` (both upper/lower case), `0` to `9` or one of these characters `_-.`
+        example: highscore-list
+        maxLength: 100
+        minLength: 2
+        pattern: ^[a-zA-Z0-9-_.]+$
+        type: string
+      payload:
+        additionalProperties: true
+        description: Custom payload. Stored untouched. On updates null means do not
+          update. `{}` is the empty value.
+        example:
+          country: dk
+          name: Mark Anthony
+        type: object
+      score:
+        description: Score of the element. Higher score gives higher placement.
+        example: 100
+        minimum: 0
+        type: integer
+      tie_breaker:
+        description: Tie breaker, used if score matches for consistent sorting. Higher
+          value = higher placement if score is equal.
+        example: 2000
+        maximum: 4.2949673e+09
+        minimum: 0
+        type: integer
+      updated_at:
+        description: Date of last update
+        example: 1996-11-22T14:02:34Z
+        format: date-time
+        type: string
+    required:
+    - id
+    - from_top
+    - from_bottom
+    - score
+    - list_id
+    - payload
+    - updated_at
+    - tie_breaker
+    title: 'Mediatype identifier: application/vnd.rankdb.element+json; view=default'
+    type: object
+  RankdbElementCollection:
+    description: RankdbElementCollection is the media type for an array of RankdbElement
+      (default view)
+    example:
+    - from_bottom: 4000
+      from_top: 50
+      id: 100
+      list_id: highscore-list
+      payload:
+        country: dk
+        name: Mark Anthony
+      score: 100
+      tie_breaker: 2000
+      updated_at: 1996-11-22T14:02:34Z
+    - from_bottom: 4000
+      from_top: 50
+      id: 100
+      list_id: highscore-list
+      payload:
+        country: dk
+        name: Mark Anthony
+      score: 100
+      tie_breaker: 2000
+      updated_at: 1996-11-22T14:02:34Z
+    - from_bottom: 4000
+      from_top: 50
+      id: 100
+      list_id: highscore-list
+      payload:
+        country: dk
+        name: Mark Anthony
+      score: 100
+      tie_breaker: 2000
+      updated_at: 1996-11-22T14:02:34Z
+    items:
+      $ref: '#/definitions/RankdbElement'
+    title: 'Mediatype identifier: application/vnd.rankdb.element+json; type=collection;
+      view=default'
+    type: array
+  RankdbElementFull:
+    description: List Element (full view)
+    example:
+      from_bottom: 4000
+      from_top: 50
+      id: 100
+      list_id: highscore-list
+      local_from_bottom: 4000
+      local_from_top: 50
+      neighbors:
+        above:
+        - from_bottom: 4000
+          from_top: 50
+          id: 100
+          list_id: highscore-list
+          payload:
+            country: dk
+            name: Mark Anthony
+          score: 100
+          tie_breaker: 2000
+          updated_at: 1996-11-22T14:02:34Z
+        - from_bottom: 4000
+          from_top: 50
+          id: 100
+          list_id: highscore-list
+          payload:
+            country: dk
+            name: Mark Anthony
+          score: 100
+          tie_breaker: 2000
+          updated_at: 1996-11-22T14:02:34Z
+        below:
+        - from_bottom: 4000
+          from_top: 50
+          id: 100
+          list_id: highscore-list
+          payload:
+            country: dk
+            name: Mark Anthony
+          score: 100
+          tie_breaker: 2000
+          updated_at: 1996-11-22T14:02:34Z
+        - from_bottom: 4000
+          from_top: 50
+          id: 100
+          list_id: highscore-list
+          payload:
+            country: dk
+            name: Mark Anthony
+          score: 100
+          tie_breaker: 2000
+          updated_at: 1996-11-22T14:02:34Z
+        - from_bottom: 4000
+          from_top: 50
+          id: 100
+          list_id: highscore-list
+          payload:
+            country: dk
+            name: Mark Anthony
+          score: 100
+          tie_breaker: 2000
+          updated_at: 1996-11-22T14:02:34Z
+      payload:
+        country: dk
+        name: Mark Anthony
+      score: 100
+      tie_breaker: 2000
+      updated_at: 2011-03-06T07:38:11Z
+    properties:
+      from_bottom:
+        description: |-
+          Element rank in list from bottom.
+           Bottom element has value 0.
+        example: 4000
+        format: int64
+        type: integer
+      from_top:
+        description: |-
+          Element rank in list from top.
+           Top element has value 0.
+        example: 50
+        format: int64
+        type: integer
+      id:
+        description: ID of element
+        example: 100
+        minimum: 0
+        type: integer
+      list_id:
+        description: |-
+          The ID of the list to apply the operation on.
+          Can be `a` to `z` (both upper/lower case), `0` to `9` or one of these characters `_-.`
+        example: highscore-list
+        maxLength: 100
+        minLength: 2
+        pattern: ^[a-zA-Z0-9-_.]+$
+        type: string
+      local_from_bottom:
+        description: |-
+          Local element rank in list from bottom when requesting sub-list.
+           Bottom element has value 0.
+        example: 4000
+        format: int64
+        type: integer
+      local_from_top:
+        description: |-
+          Local element rank in list from top when requesting sub-list.
+           Top element has value 0.
+        example: 50
+        format: int64
+        type: integer
+      neighbors:
+        description: Neighbors to current element
+        example:
+          above:
+          - from_bottom: 4000
+            from_top: 50
+            id: 100
+            list_id: highscore-list
+            payload:
+              country: dk
+              name: Mark Anthony
+            score: 100
+            tie_breaker: 2000
+            updated_at: 1996-11-22T14:02:34Z
+          - from_bottom: 4000
+            from_top: 50
+            id: 100
+            list_id: highscore-list
+            payload:
+              country: dk
+              name: Mark Anthony
+            score: 100
+            tie_breaker: 2000
+            updated_at: 1996-11-22T14:02:34Z
+          below:
+          - from_bottom: 4000
+            from_top: 50
+            id: 100
+            list_id: highscore-list
+            payload:
+              country: dk
+              name: Mark Anthony
+            score: 100
+            tie_breaker: 2000
+            updated_at: 1996-11-22T14:02:34Z
+          - from_bottom: 4000
+            from_top: 50
+            id: 100
+            list_id: highscore-list
+            payload:
+              country: dk
+              name: Mark Anthony
+            score: 100
+            tie_breaker: 2000
+            updated_at: 1996-11-22T14:02:34Z
+          - from_bottom: 4000
+            from_top: 50
+            id: 100
+            list_id: highscore-list
+            payload:
+              country: dk
+              name: Mark Anthony
+            score: 100
+            tie_breaker: 2000
+            updated_at: 1996-11-22T14:02:34Z
+        properties:
+          above:
+            $ref: '#/definitions/RankdbElementCollection'
+          below:
+            $ref: '#/definitions/RankdbElementCollection'
+        type: object
+      payload:
+        additionalProperties: true
+        description: Custom payload. Stored untouched. On updates null means do not
+          update. `{}` is the empty value.
+        example:
+          country: dk
+          name: Mark Anthony
+        type: object
+      score:
+        description: Score of the element. Higher score gives higher placement.
+        example: 100
+        minimum: 0
+        type: integer
+      tie_breaker:
+        description: Tie breaker, used if score matches for consistent sorting. Higher
+          value = higher placement if score is equal.
+        example: 2000
+        maximum: 4.2949673e+09
+        minimum: 0
+        type: integer
+      updated_at:
+        description: Date of last update
+        example: 2011-03-06T07:38:11Z
+        format: date-time
+        type: string
+    required:
+    - id
+    - from_top
+    - from_bottom
+    - score
+    - list_id
+    - payload
+    - updated_at
+    - tie_breaker
+    title: 'Mediatype identifier: application/vnd.rankdb.element+json; view=full'
+    type: object
+  RankdbElementFull-Update:
+    description: List Element (full-update view)
+    example:
+      from_bottom: 4000
+      from_top: 50
+      id: 100
+      list_id: highscore-list
+      local_from_bottom: 4000
+      local_from_top: 50
+      neighbors:
+        above:
+        - from_bottom: 4000
+          from_top: 50
+          id: 100
+          list_id: highscore-list
+          payload:
+            country: dk
+            name: Mark Anthony
+          score: 100
+          tie_breaker: 2000
+          updated_at: 1996-11-22T14:02:34Z
+        - from_bottom: 4000
+          from_top: 50
+          id: 100
+          list_id: highscore-list
+          payload:
+            country: dk
+            name: Mark Anthony
+          score: 100
+          tie_breaker: 2000
+          updated_at: 1996-11-22T14:02:34Z
+        below:
+        - from_bottom: 4000
+          from_top: 50
+          id: 100
+          list_id: highscore-list
+          payload:
+            country: dk
+            name: Mark Anthony
+          score: 100
+          tie_breaker: 2000
+          updated_at: 1996-11-22T14:02:34Z
+        - from_bottom: 4000
+          from_top: 50
+          id: 100
+          list_id: highscore-list
+          payload:
+            country: dk
+            name: Mark Anthony
+          score: 100
+          tie_breaker: 2000
+          updated_at: 1996-11-22T14:02:34Z
+        - from_bottom: 4000
+          from_top: 50
+          id: 100
+          list_id: highscore-list
+          payload:
+            country: dk
+            name: Mark Anthony
+          score: 100
+          tie_breaker: 2000
+          updated_at: 1996-11-22T14:02:34Z
+      payload:
+        country: dk
+        name: Mark Anthony
+      previous_rank:
+        from_bottom: 4000
+        from_top: 50
+        id: 100
+        list_id: highscore-list
+        payload:
+          country: dk
+          name: Mark Anthony
+        score: 100
+        tie_breaker: 2000
+        updated_at: 1996-11-22T14:02:34Z
+      score: 100
+      tie_breaker: 2000
+      updated_at: 2011-03-06T07:38:11Z
+    properties:
+      from_bottom:
+        description: |-
+          Element rank in list from bottom.
+           Bottom element has value 0.
+        example: 4000
+        format: int64
+        type: integer
+      from_top:
+        description: |-
+          Element rank in list from top.
+           Top element has value 0.
+        example: 50
+        format: int64
+        type: integer
+      id:
+        description: ID of element
+        example: 100
+        minimum: 0
+        type: integer
+      list_id:
+        description: |-
+          The ID of the list to apply the operation on.
+          Can be `a` to `z` (both upper/lower case), `0` to `9` or one of these characters `_-.`
+        example: highscore-list
+        maxLength: 100
+        minLength: 2
+        pattern: ^[a-zA-Z0-9-_.]+$
+        type: string
+      local_from_bottom:
+        description: |-
+          Local element rank in list from bottom when requesting sub-list.
+           Bottom element has value 0.
+        example: 4000
+        format: int64
+        type: integer
+      local_from_top:
+        description: |-
+          Local element rank in list from top when requesting sub-list.
+           Top element has value 0.
+        example: 50
+        format: int64
+        type: integer
+      neighbors:
+        description: Neighbors to current element
+        example:
+          above:
+          - from_bottom: 4000
+            from_top: 50
+            id: 100
+            list_id: highscore-list
+            payload:
+              country: dk
+              name: Mark Anthony
+            score: 100
+            tie_breaker: 2000
+            updated_at: 1996-11-22T14:02:34Z
+          - from_bottom: 4000
+            from_top: 50
+            id: 100
+            list_id: highscore-list
+            payload:
+              country: dk
+              name: Mark Anthony
+            score: 100
+            tie_breaker: 2000
+            updated_at: 1996-11-22T14:02:34Z
+          below:
+          - from_bottom: 4000
+            from_top: 50
+            id: 100
+            list_id: highscore-list
+            payload:
+              country: dk
+              name: Mark Anthony
+            score: 100
+            tie_breaker: 2000
+            updated_at: 1996-11-22T14:02:34Z
+          - from_bottom: 4000
+            from_top: 50
+            id: 100
+            list_id: highscore-list
+            payload:
+              country: dk
+              name: Mark Anthony
+            score: 100
+            tie_breaker: 2000
+            updated_at: 1996-11-22T14:02:34Z
+          - from_bottom: 4000
+            from_top: 50
+            id: 100
+            list_id: highscore-list
+            payload:
+              country: dk
+              name: Mark Anthony
+            score: 100
+            tie_breaker: 2000
+            updated_at: 1996-11-22T14:02:34Z
+        properties:
+          above:
+            $ref: '#/definitions/RankdbElementCollection'
+          below:
+            $ref: '#/definitions/RankdbElementCollection'
+        type: object
+      payload:
+        additionalProperties: true
+        description: Custom payload. Stored untouched. On updates null means do not
+          update. `{}` is the empty value.
+        example:
+          country: dk
+          name: Mark Anthony
+        type: object
+      previous_rank:
+        $ref: '#/definitions/RankdbElement'
+      score:
+        description: Score of the element. Higher score gives higher placement.
+        example: 100
+        minimum: 0
+        type: integer
+      tie_breaker:
+        description: Tie breaker, used if score matches for consistent sorting. Higher
+          value = higher placement if score is equal.
+        example: 2000
+        maximum: 4.2949673e+09
+        minimum: 0
+        type: integer
+      updated_at:
+        description: Date of last update
+        example: 2011-03-06T07:38:11Z
+        format: date-time
+        type: string
+    required:
+    - id
+    - from_top
+    - from_bottom
+    - score
+    - list_id
+    - payload
+    - updated_at
+    - tie_breaker
+    title: 'Mediatype identifier: application/vnd.rankdb.element+json; view=full-update'
+    type: object
+  RankdbListopresult:
+    description: Result of a list operation. Will contain either an error or a list.
+      (default view)
+    example:
+      error: not found
+      list:
+        id: highscore-list
+        load_index: false
+        merge_size: 500
+        metadata:
+          country: dk
+          game: "2"
+        set: storage-set
+        split_size: 2000
+    properties:
+      error:
+        description: Error, if any encountered
+        example: not found
+        type: string
+      list:
+        $ref: '#/definitions/RankdbRanklist'
+    title: 'Mediatype identifier: application/vnd.rankdb.listopresult+json; view=default'
+    type: object
+  RankdbListsresult:
+    description: RankdbListsresult media type (default view)
+    example:
+      lists:
+      - id: highscore-list
+        load_index: false
+        merge_size: 500
+        metadata:
+          country: dk
+          game: "2"
+        set: storage-set
+        split_size: 2000
+      - id: highscore-list
+        load_index: false
+        merge_size: 500
+        metadata:
+          country: dk
+          game: "2"
+        set: storage-set
+        split_size: 2000
+      - id: highscore-list
+        load_index: false
+        merge_size: 500
+        metadata:
+          country: dk
+          game: "2"
+        set: storage-set
+        split_size: 2000
+      lists_after: 4.9232205e+18
+      lists_before: 2.009714e+18
+    properties:
+      lists:
+        $ref: '#/definitions/RankdbRanklistCollection'
+      lists_after:
+        description: The number of lists after the last element
+        example: 4.9232205e+18
+        format: int64
+        type: integer
+      lists_before:
+        description: The number of lists before the first element
+        example: 2.009714e+18
+        format: int64
+        type: integer
+    required:
+    - lists_before
+    - lists_after
+    - lists
+    title: 'Mediatype identifier: application/vnd.rankdb.listsresult+json; view=default'
+    type: object
+  RankdbMultielement:
+    description: RankdbMultielement media type (default view)
+    example:
+      found:
+      - from_bottom: 4000
+        from_top: 50
+        id: 100
+        list_id: highscore-list
+        payload:
+          country: dk
+          name: Mark Anthony
+        score: 100
+        tie_breaker: 2000
+        updated_at: 1996-11-22T14:02:34Z
+      - from_bottom: 4000
+        from_top: 50
+        id: 100
+        list_id: highscore-list
+        payload:
+          country: dk
+          name: Mark Anthony
+        score: 100
+        tie_breaker: 2000
+        updated_at: 1996-11-22T14:02:34Z
+      not_found:
+      - 5.935541e+18
+      - 5.935541e+18
+    properties:
+      found:
+        $ref: '#/definitions/RankdbElementCollection'
+      not_found:
+        description: Elements that wasn't found in the list. Unordered.
+        example:
+        - 5.935541e+18
+        - 5.935541e+18
+        items:
+          example: 5.935541e+18
+          format: int64
+          type: integer
+        type: array
+    required:
+    - found
+    title: 'Mediatype identifier: application/vnd.rankdb.multielement+json; view=default'
+    type: object
+  RankdbRanklist:
+    description: Rank List (default view)
+    example:
+      id: highscore-list
+      load_index: false
+      merge_size: 500
+      metadata:
+        country: dk
+        game: "2"
+      set: storage-set
+      split_size: 2000
+    properties:
+      id:
+        description: |-
+          The ID of the list to apply the operation on.
+          Can be `a` to `z` (both upper/lower case), `0` to `9` or one of these characters `_-.`
+        example: highscore-list
+        maxLength: 100
+        minLength: 2
+        pattern: ^[a-zA-Z0-9-_.]+$
+        type: string
+      load_index:
+        default: false
+        description: Load Index on server startup
+        example: false
+        type: boolean
+      merge_size:
+        default: 500
+        description: Merge adjacent Segments with less than this number of entries
+        example: 500
+        maximum: 100000
+        minimum: 10
+        type: integer
+      metadata:
+        additionalProperties: true
+        description: Custom metadata. String to String hash.
+        example:
+          country: dk
+          game: "2"
+        type: object
+      set:
+        description: Set used for storage
+        example: storage-set
+        maxLength: 100
+        minLength: 2
+        type: string
+      split_size:
+        default: 2000
+        description: Split Segments larger than this number of entries
+        example: 2000
+        maximum: 100000
+        minimum: 10
+        type: integer
+    required:
+    - id
+    - set
+    - metadata
+    - split_size
+    - merge_size
+    - load_index
+    title: 'Mediatype identifier: application/vnd.rankdb.ranklist+json; view=default'
+    type: object
+  RankdbRanklistCollection:
+    description: RankdbRanklistCollection is the media type for an array of RankdbRanklist
+      (default view)
+    example:
+    - id: highscore-list
+      load_index: false
+      merge_size: 500
+      metadata:
+        country: dk
+        game: "2"
+      set: storage-set
+      split_size: 2000
+    - id: highscore-list
+      load_index: false
+      merge_size: 500
+      metadata:
+        country: dk
+        game: "2"
+      set: storage-set
+      split_size: 2000
+    items:
+      $ref: '#/definitions/RankdbRanklist'
+    title: 'Mediatype identifier: application/vnd.rankdb.ranklist+json; type=collection;
+      view=default'
+    type: array
+  RankdbRanklistFull:
+    description: Rank List (full view)
+    example:
+      avg_segment_elements: 1005.5
+      bottom_element:
+        from_bottom: 4000
+        from_top: 50
+        id: 100
+        list_id: highscore-list
+        payload:
+          country: dk
+          name: Mark Anthony
+        score: 100
+        tie_breaker: 2000
+        updated_at: 1996-11-22T14:02:34Z
+      cache_hits: 643
+      cache_misses: 123
+      cache_percent: 64.56
+      elements: 15000
+      id: highscore-list
+      load_index: false
+      merge_size: 500
+      metadata:
+        country: dk
+        game: "2"
+      segments: 15
+      set: storage-set
+      split_size: 2000
+      top_element:
+        from_bottom: 4000
+        from_top: 50
+        id: 100
+        list_id: highscore-list
+        payload:
+          country: dk
+          name: Mark Anthony
+        score: 100
+        tie_breaker: 2000
+        updated_at: 1996-11-22T14:02:34Z
+    properties:
+      avg_segment_elements:
+        description: Average number of elements per segment
+        example: 1005.5
+        format: double
+        type: number
+      bottom_element:
+        $ref: '#/definitions/RankdbElement'
+      cache_hits:
+        description: Cache hits while segments have been loaded.
+        example: 643
+        format: int64
+        type: integer
+      cache_misses:
+        description: Cache misses while segments have been loaded.
+        example: 123
+        format: int64
+        type: integer
+      cache_percent:
+        description: Cache hit percentage while segments have been loaded.
+        example: 64.56
+        format: double
+        type: number
+      elements:
+        description: Number of elements in list
+        example: 15000
+        format: int64
+        type: integer
+      id:
+        description: |-
+          The ID of the list to apply the operation on.
+          Can be `a` to `z` (both upper/lower case), `0` to `9` or one of these characters `_-.`
+        example: highscore-list
+        maxLength: 100
+        minLength: 2
+        pattern: ^[a-zA-Z0-9-_.]+$
+        type: string
+      load_index:
+        default: false
+        description: Load Index on server startup
+        example: false
+        type: boolean
+      merge_size:
+        default: 500
+        description: Merge adjacent Segments with less than this number of entries
+        example: 500
+        maximum: 100000
+        minimum: 10
+        type: integer
+      metadata:
+        additionalProperties: true
+        description: Custom metadata. String to String hash.
+        example:
+          country: dk
+          game: "2"
+        type: object
+      segments:
+        description: Number of segment in list
+        example: 15
+        format: int64
+        type: integer
+      set:
+        description: Set used for storage
+        example: storage-set
+        maxLength: 100
+        minLength: 2
+        type: string
+      split_size:
+        default: 2000
+        description: Split Segments larger than this number of entries
+        example: 2000
+        maximum: 100000
+        minimum: 10
+        type: integer
+      top_element:
+        $ref: '#/definitions/RankdbElement'
+    required:
+    - id
+    - set
+    - metadata
+    - segments
+    - elements
+    - avg_segment_elements
+    - split_size
+    - merge_size
+    - load_index
+    - cache_hits
+    - cache_misses
+    - cache_percent
+    title: 'Mediatype identifier: application/vnd.rankdb.ranklist+json; view=full'
+    type: object
+  RankdbRestoreresult:
+    description: RankdbRestoreresult media type (default view)
+    example:
+      errors:
+        highscore-dk-all: not found
+      restored: 20
+      skipped: 1
+    properties:
+      errors:
+        additionalProperties: true
+        description: Failed operations, indexed by list IDs
+        example:
+          highscore-dk-all: not found
+        type: object
+      restored:
+        description: Successful restore operations, indexed by list IDs
+        example: 20
+        format: int64
+        type: integer
+      skipped:
+        description: Skipped lists, indexed by list IDs
+        example: 1
+        format: int64
+        type: integer
+    required:
+    - restored
+    - skipped
+    - errors
+    title: 'Mediatype identifier: application/vnd.rankdb.restoreresult+json; view=default'
+    type: object
+  RankdbResultlist:
+    description: RankdbResultlist media type (default view)
+    example:
+      errors:
+        highscore-dk-all: not found
+      success:
+        highscore-uk-all: {}
+    properties:
+      errors:
+        additionalProperties: true
+        description: Failed operations, indexed by list IDs
+        example:
+          highscore-dk-all: not found
+        type: object
+      success:
+        additionalProperties: true
+        description: Successful operations, indexed by list IDs
+        example:
+          highscore-uk-all: {}
+        type: object
+    title: 'Mediatype identifier: application/vnd.rankdb.resultlist+json; view=default'
+    type: object
+  RankdbSysinfo:
+    description: System Info. The model is sparse and may contain other information.
+      (default view)
+    example:
+      element_cache:
+        current_entries: 5000
+        max_size: 10000
+      lazy_saver:
+        current_entries: 5000
+        max_size: 10000
+      memory:
+        Alloc: 621480
+        Lookups: 5
+        Mallocs: 5940
+        Sys: 4.262136e+06
+        TotalAlloc: 621480
+    properties:
+      element_cache:
+        additionalProperties: true
+        description: Element Cache Information
+        example:
+          current_entries: 5000
+          max_size: 10000
+        type: object
+      lazy_saver:
+        additionalProperties: true
+        description: Lazy saver cache information.
+        example:
+          current_entries: 5000
+          max_size: 10000
+        type: object
+      memory:
+        additionalProperties: true
+        description: Memory Information
+        example:
+          Alloc: 621480
+          Lookups: 5
+          Mallocs: 5940
+          Sys: 4.262136e+06
+          TotalAlloc: 621480
+        type: object
+    title: 'Mediatype identifier: application/vnd.rankdb.sysinfo+json; view=default'
+    type: object
+  error:
+    description: Error response media type (default view)
+    example:
+      code: invalid_value
+      detail: Value of ID must be an integer
+      id: 3F1FKVRR
+      meta:
+        timestamp: 1.458609e+09
+      status: "400"
+    properties:
+      code:
+        description: an application-specific error code, expressed as a string value.
+        example: invalid_value
+        type: string
+      detail:
+        description: a human-readable explanation specific to this occurrence of the
+          problem.
+        example: Value of ID must be an integer
+        type: string
+      id:
+        description: a unique identifier for this particular occurrence of the problem.
+        example: 3F1FKVRR
+        type: string
+      meta:
+        additionalProperties: true
+        description: a meta object containing non-standard meta-information about
+          the error.
+        example:
+          timestamp: 1.458609e+09
+        type: object
+      status:
+        description: the HTTP status code applicable to this problem, expressed as
+          a string value.
+        example: "400"
+        type: string
+    title: 'Mediatype identifier: application/vnd.goa.error; view=default'
+    type: object
+info:
+  description: API for controlling RankDB
+  title: The RankDB API
+  version: "1.0"
+paths:
+  /:
+    get:
+      description: |-
+        Ping server
+
+        Required security scopes:
+          * `api:manage`
+      operationId: health#root
+      produces:
+      - application/json
+      - application/vnd.goa.error
+      responses:
+        "200":
+          description: OK
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/error'
+      security:
+      - jwt:
+        - api:manage
+      summary: Root
+      tags:
+      - health
+  /api/swagger/{filepath}:
+    get:
+      operationId: static#/api/swagger/*filepath
+      parameters:
+      - description: Relative file path
+        in: path
+        name: filepath
+        required: true
+        type: string
+      responses:
+        "200":
+          description: File downloaded
+          schema:
+            type: file
+        "404":
+          description: File not found
+          schema:
+            $ref: '#/definitions/error'
+      summary: Download swagger
+  /backup/{backup_id}:
+    delete:
+      description: |-
+        cancel backup
+
+        Required security scopes:
+          * `api:manage`
+      operationId: backup#delete
+      parameters:
+      - in: path
+        name: backup_id
+        required: true
+        type: string
+      produces:
+      - application/vnd.goa.error
+      responses:
+        "204":
+          description: No Content
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/error'
+      security:
+      - jwt:
+        - api:manage
+      summary: cancel Backup
+      tags:
+      - backup
+    get:
+      description: |-
+        Return backup progress
+
+        Required security scopes:
+          * `api:manage`
+      operationId: backup#status
+      parameters:
+      - in: path
+        name: backup_id
+        required: true
+        type: string
+      produces:
+      - application/vnd.goa.error
+      - application/vnd.rankdb.backup_status+json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/RankdbBackup_status'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/error'
+      security:
+      - jwt:
+        - api:manage
+      summary: Return backup progress
+      tags:
+      - backup
+  /doc/{filepath}:
+    get:
+      operationId: static#/doc/*filepath
+      parameters:
+      - description: Relative file path
+        in: path
+        name: filepath
+        required: true
+        type: string
+      responses:
+        "200":
+          description: File downloaded
+          schema:
+            type: file
+        "404":
+          description: File not found
+          schema:
+            $ref: '#/definitions/error'
+      summary: Swagger UX static files
+  /health:
+    get:
+      description: |-
+        Return system information
+
+        Required security scopes:
+          * `api:manage`
+      operationId: health#health
+      produces:
+      - application/vnd.goa.error
+      - application/vnd.rankdb.sysinfo+json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/RankdbSysinfo'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/error'
+      security:
+      - jwt:
+        - api:manage
+      summary: Return system information
+      tags:
+      - health
+  /jwt:
+    post:
+      description: |-
+        JWT key generator.
+        If left disabled in config, Unauthorized is returned
+
+        Required security scopes:
+          * `api:manage`
+      operationId: jwt#jwt
+      parameters:
+      - default: 1440
+        description: Expire token in this many minutes. Default is 24 hours.
+        in: query
+        minimum: 1
+        name: expire
+        required: false
+        type: integer
+      - description: |-
+          Create key with list restrictions.
+          Use commas to separate multiple elements
+        in: query
+        name: only_elements
+        required: false
+        type: string
+      - description: |-
+          Create key with list restrictions.
+          Use commas to separate multiple lists
+        in: query
+        name: only_lists
+        required: false
+        type: string
+      - default: api:read
+        description: Create key with scope
+        in: query
+        name: scope
+        required: true
+        type: string
+      produces:
+      - application/vnd.goa.error
+      - text/plain
+      responses:
+        "200":
+          description: OK
+          headers:
+            Authorization:
+              description: Generated JWT. Can be used as bearer.
+              type: string
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/error'
+      security:
+      - jwt:
+        - api:manage
+      summary: JWT key generator
+      tags:
+      - jwt
+  /lists:
+    get:
+      description: |-
+        Get multiple lists.
+        Lists are sorted lexicographically. See https://golang.org/pkg/strings/#Compare
+
+        Required security scopes:
+          * `api:manage`
+      operationId: lists#get_all
+      parameters:
+      - default: ""
+        description: Start with element following this ID. Empty will return from
+          start.
+        in: query
+        name: after_id
+        required: false
+        type: string
+      - default: ""
+        description: Return elements preceding this ID.
+        in: query
+        name: before_id
+        required: false
+        type: string
+      - default: 25
+        description: Maximum Number of results
+        in: query
+        maximum: 1000
+        minimum: 1
+        name: limit
+        required: false
+        type: integer
+      produces:
+      - application/vnd.goa.error
+      - application/vnd.rankdb.listsresult+json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/RankdbListsresult'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/error'
+      security:
+      - jwt:
+        - api:manage
+      summary: Get Multiple Lists
+      tags:
+      - lists
+    post:
+      description: |-
+        Create New List.
+        If the list already exists "Conflict" will be returned.
+        The provided populated data may be provided unsorted, but should not contain duplicate element IDs.
+
+        Required security scopes:
+          * `api:manage`
+      operationId: lists#create
+      parameters:
+      - default: false
+        description: Replace list if exists.
+        in: query
+        name: replace
+        required: false
+        type: boolean
+      - in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/RankList'
+      produces:
+      - application/vnd.goa.error
+      - application/vnd.rankdb.ranklist+json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/RankdbRanklistFull'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/error'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/error'
+      security:
+      - jwt:
+        - api:manage
+      summary: Create New List
+      tags:
+      - lists
+  /lists/{list_id}:
+    delete:
+      description: |-
+        Delete List.
+        Also returns success if list was not found.
+
+        Required security scopes:
+          * `api:manage`
+      operationId: lists#delete
+      parameters:
+      - description: |-
+          The ID of the list to apply the operation on.
+          Can be `a` to `z` (both upper/lower case), `0` to `9` or one of these characters `_-.`
+        in: path
+        maxLength: 100
+        minLength: 2
+        name: list_id
+        pattern: ^[a-zA-Z0-9-_.]+$
+        required: true
+        type: string
+      produces:
+      - application/vnd.goa.error
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/error'
+      security:
+      - jwt:
+        - api:manage
+      summary: Delete List
+      tags:
+      - lists
+    get:
+      description: |-
+        Return Single List.
+        Note that top and bottom element will be omitted on empty lists.
+
+        Required security scopes:
+          * `api:read`
+      operationId: lists#get
+      parameters:
+      - description: |-
+          The ID of the list to apply the operation on.
+          Can be `a` to `z` (both upper/lower case), `0` to `9` or one of these characters `_-.`
+        in: path
+        maxLength: 100
+        minLength: 2
+        name: list_id
+        pattern: ^[a-zA-Z0-9-_.]+$
+        required: true
+        type: string
+      - default: false
+        description: Include top_element and bottom_element in result.
+        in: query
+        name: top_bottom
+        required: false
+        type: boolean
+      produces:
+      - application/vnd.goa.error
+      - application/vnd.rankdb.ranklist+json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/RankdbRanklistFull'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/error'
+      security:
+      - jwt:
+        - api:read
+      summary: Return Single List
+      tags:
+      - lists
+  /lists/{list_id}/clone:
+    put:
+      description: |-
+        Creates a clone of the list to a new list with the supplied metadata.
+        The URL list is the source and the payload must contain the new list ID.
+
+        Required security scopes:
+          * `api:manage`
+      operationId: lists#clone
+      parameters:
+      - description: |-
+          The ID of the list to apply the operation on.
+          Can be `a` to `z` (both upper/lower case), `0` to `9` or one of these characters `_-.`
+        in: path
+        maxLength: 100
+        minLength: 2
+        name: list_id
+        pattern: ^[a-zA-Z0-9-_.]+$
+        required: true
+        type: string
+      - in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/RankList'
+      produces:
+      - application/vnd.goa.error
+      - application/vnd.rankdb.ranklist+json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/RankdbRanklistFull'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/error'
+        "404":
+          description: Returned if the original list cannot be found
+          schema:
+            $ref: '#/definitions/error'
+        "409":
+          description: Returned if the new list already exists.
+          schema:
+            $ref: '#/definitions/error'
+      security:
+      - jwt:
+        - api:manage
+      summary: Clone list
+      tags:
+      - lists
+  /lists/{list_id}/elements:
+    delete:
+      description: |-
+        Delete Multiple Elements in list.If an element does not exist, success is returned.
+
+
+        Required security scopes:
+          * `api:delete`
+      operationId: elements#delete-multi
+      parameters:
+      - collectionFormat: multi
+        description: IDs of elements
+        in: query
+        items:
+          maxLength: 20
+          minLength: 1
+          pattern: ^[0-9]+$
+          type: string
+        maxItems: 10000
+        minItems: 1
+        name: element_ids
+        required: false
+        type: array
+      - description: |-
+          The ID of the list to apply the operation on.
+          Can be `a` to `z` (both upper/lower case), `0` to `9` or one of these characters `_-.`
+        in: path
+        maxLength: 100
+        minLength: 2
+        name: list_id
+        pattern: ^[a-zA-Z0-9-_.]+$
+        required: true
+        type: string
+      produces:
+      - application/vnd.goa.error
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/error'
+      security:
+      - jwt:
+        - api:delete
+      summary: Delete Multiple Elements in list
+      tags:
+      - elements
+    post:
+      description: |-
+        Create Element in list
+
+        Required security scopes:
+          * `api:update`
+      operationId: elements#create
+      parameters:
+      - description: |-
+          The ID of the list to apply the operation on.
+          Can be `a` to `z` (both upper/lower case), `0` to `9` or one of these characters `_-.`
+        in: path
+        maxLength: 100
+        minLength: 2
+        name: list_id
+        pattern: ^[a-zA-Z0-9-_.]+$
+        required: true
+        type: string
+      - default: 5
+        description: Return this number of elements above and below the current element
+          in `neighbors` field.
+        in: query
+        maximum: 100
+        minimum: 0
+        name: range
+        required: false
+        type: integer
+      - in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/Element'
+      produces:
+      - application/vnd.goa.error
+      - application/vnd.rankdb.element+json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/RankdbElementFull'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/error'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/error'
+      security:
+      - jwt:
+        - api:update
+      summary: Create Element in list
+      tags:
+      - elements
+    put:
+      description: |-
+        Update Multiple Elements in list.If element does not exist, it is created in list.
+        The returned "not_found" field will never be preset.
+
+        Required security scopes:
+          * `api:update`
+      operationId: elements#put-multi
+      parameters:
+      - description: |-
+          The ID of the list to apply the operation on.
+          Can be `a` to `z` (both upper/lower case), `0` to `9` or one of these characters `_-.`
+        in: path
+        maxLength: 100
+        minLength: 2
+        name: list_id
+        pattern: ^[a-zA-Z0-9-_.]+$
+        required: true
+        type: string
+      - default: false
+        description: Return results of the operation. If disabled, operations will
+          be faster and require less memory.
+        in: query
+        name: results
+        required: false
+        type: boolean
+      - in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/PutMultiElementsPayload'
+      produces:
+      - application/vnd.goa.error
+      - application/vnd.rankdb.multielement+json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/RankdbMultielement'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/error'
+      security:
+      - jwt:
+        - api:update
+      summary: Update Multiple Elements
+      tags:
+      - elements
+  /lists/{list_id}/elements/{element_id}:
+    delete:
+      description: |-
+        Delete element in list. If element is not found the operation is considered a success
+
+        Required security scopes:
+          * `api:delete`
+      operationId: elements#delete
+      parameters:
+      - description: ID of element
+        in: path
+        maxLength: 20
+        minLength: 1
+        name: element_id
+        pattern: ^[0-9]+$
+        required: true
+        type: string
+      - description: |-
+          The ID of the list to apply the operation on.
+          Can be `a` to `z` (both upper/lower case), `0` to `9` or one of these characters `_-.`
+        in: path
+        maxLength: 100
+        minLength: 2
+        name: list_id
+        pattern: ^[a-zA-Z0-9-_.]+$
+        required: true
+        type: string
+      produces:
+      - application/vnd.goa.error
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/error'
+      security:
+      - jwt:
+        - api:delete
+      summary: Delete Element in list
+      tags:
+      - elements
+    get:
+      description: |-
+        Get Element in list
+
+        Required security scopes:
+          * `api:read`
+      operationId: elements#get
+      parameters:
+      - description: ID of element
+        in: path
+        maxLength: 20
+        minLength: 1
+        name: element_id
+        pattern: ^[0-9]+$
+        required: true
+        type: string
+      - description: |-
+          The ID of the list to apply the operation on.
+          Can be `a` to `z` (both upper/lower case), `0` to `9` or one of these characters `_-.`
+        in: path
+        maxLength: 100
+        minLength: 2
+        name: list_id
+        pattern: ^[a-zA-Z0-9-_.]+$
+        required: true
+        type: string
+      - default: 5
+        description: Return this number of elements above and below the current element
+          in `neighbors` field.
+        in: query
+        maximum: 100
+        minimum: 0
+        name: range
+        required: false
+        type: integer
+      produces:
+      - application/vnd.goa.error
+      - application/vnd.rankdb.element+json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/RankdbElementFull'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/error'
+      security:
+      - jwt:
+        - api:read
+      summary: Get Element in list
+      tags:
+      - elements
+    put:
+      description: |-
+        Update element in list
+        If element does not exist, it is created in list.
+        Element ID in payload an url must match.
+
+        Required security scopes:
+          * `api:update`
+      operationId: elements#put
+      parameters:
+      - description: ID of element
+        in: path
+        maxLength: 20
+        minLength: 1
+        name: element_id
+        pattern: ^[0-9]+$
+        required: true
+        type: string
+      - description: |-
+          The ID of the list to apply the operation on.
+          Can be `a` to `z` (both upper/lower case), `0` to `9` or one of these characters `_-.`
+        in: path
+        maxLength: 100
+        minLength: 2
+        name: list_id
+        pattern: ^[a-zA-Z0-9-_.]+$
+        required: true
+        type: string
+      - default: 5
+        description: Return this number of elements above and below the current element
+          in `neighbors` field.
+        in: query
+        maximum: 100
+        minimum: 0
+        name: range
+        required: false
+        type: integer
+      - in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/Element'
+      produces:
+      - application/vnd.goa.error
+      - application/vnd.rankdb.element+json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/RankdbElementFull-Update'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/error'
+      security:
+      - jwt:
+        - api:update
+      summary: Update Element in list
+      tags:
+      - elements
+  /lists/{list_id}/elements/{element_id}/around:
+    post:
+      description: |-
+        Get relation of one element to multiple specific elements.
+        The element will have local_from_top and local_from_bottom populated.Elements that are not found are ignored.
+
+
+        Required security scopes:
+          * `api:read`
+      operationId: elements#get-around
+      parameters:
+      - description: ID of element
+        in: path
+        maxLength: 20
+        minLength: 1
+        name: element_id
+        pattern: ^[0-9]+$
+        required: true
+        type: string
+      - description: |-
+          The ID of the list to apply the operation on.
+          Can be `a` to `z` (both upper/lower case), `0` to `9` or one of these characters `_-.`
+        in: path
+        maxLength: 100
+        minLength: 2
+        name: list_id
+        pattern: ^[a-zA-Z0-9-_.]+$
+        required: true
+        type: string
+      - default: 5
+        description: Return this number of elements above and below the current element
+          in `neighbors` field.
+        in: query
+        maximum: 100
+        minimum: 0
+        name: range
+        required: false
+        type: integer
+      - in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/MultiElement'
+      produces:
+      - application/vnd.goa.error
+      - application/vnd.rankdb.element+json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/RankdbElementFull'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/error'
+      security:
+      - jwt:
+        - api:read
+      summary: Get relation of one element to multiple specific elements.
+      tags:
+      - elements
+  /lists/{list_id}/elements/find:
+    post:
+      description: |-
+        Get Multiple Elements in list.
+        Will return 404 if list cannot be found, OK even if no elements are found.
+
+        Required security scopes:
+          * `api:read`
+      operationId: elements#get-multi
+      parameters:
+      - description: |-
+          The ID of the list to apply the operation on.
+          Can be `a` to `z` (both upper/lower case), `0` to `9` or one of these characters `_-.`
+        in: path
+        maxLength: 100
+        minLength: 2
+        name: list_id
+        pattern: ^[a-zA-Z0-9-_.]+$
+        required: true
+        type: string
+      - in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/MultiElement'
+      produces:
+      - application/vnd.goa.error
+      - application/vnd.rankdb.multielement+json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/RankdbMultielement'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/error'
+      security:
+      - jwt:
+        - api:read
+      summary: Get Multiple Elements
+      tags:
+      - elements
+  /lists/{list_id}/percentile:
+    get:
+      description: |-
+        Get element at percentile.
+        Either `from_top` or `from_bottom` must be supplied
+
+        Required security scopes:
+          * `api:read`
+      operationId: lists#get-percentile
+      parameters:
+      - default: "50.0"
+        description: |-
+          Return median percentile element.
+          If the percentile is between two elements, the element with the highest score is returned.
+          Value must be parseable as a float point number and must be between 0.0 and 100.0
+        in: query
+        name: from_top
+        required: false
+        type: string
+      - description: |-
+          The ID of the list to apply the operation on.
+          Can be `a` to `z` (both upper/lower case), `0` to `9` or one of these characters `_-.`
+        in: path
+        maxLength: 100
+        minLength: 2
+        name: list_id
+        pattern: ^[a-zA-Z0-9-_.]+$
+        required: true
+        type: string
+      - default: 5
+        description: Return this number of elements above and below the current element
+          in `neighbors` field.
+        in: query
+        maximum: 100
+        minimum: 0
+        name: range
+        required: false
+        type: integer
+      produces:
+      - application/vnd.goa.error
+      - application/vnd.rankdb.element+json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/RankdbElementFull'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/error'
+      security:
+      - jwt:
+        - api:read
+      summary: Get element at percentile
+      tags:
+      - lists
+  /lists/{list_id}/range:
+    get:
+      description: |-
+        Get rank range of the list.
+        Either `from_top` or `from_bottom` must be supplied
+
+        Required security scopes:
+          * `api:read`
+      operationId: lists#get-range
+      parameters:
+      - description: First result will be at this rank from the bottom of the list.
+        in: query
+        minimum: 0
+        name: from_bottom
+        required: false
+        type: integer
+      - description: First result will be at this rank from the top of the list.
+        in: query
+        minimum: 0
+        name: from_top
+        required: false
+        type: integer
+      - default: 25
+        description: Number of results to return
+        in: query
+        maximum: 1000
+        minimum: 1
+        name: limit
+        required: false
+        type: integer
+      - description: |-
+          The ID of the list to apply the operation on.
+          Can be `a` to `z` (both upper/lower case), `0` to `9` or one of these characters `_-.`
+        in: path
+        maxLength: 100
+        minLength: 2
+        name: list_id
+        pattern: ^[a-zA-Z0-9-_.]+$
+        required: true
+        type: string
+      produces:
+      - application/vnd.goa.error
+      - application/vnd.rankdb.element+json; type=collection
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/RankdbElementCollection'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/error'
+      security:
+      - jwt:
+        - api:read
+      summary: Get rank range of the list
+      tags:
+      - lists
+  /lists/{list_id}/reindex:
+    put:
+      description: |-
+        Recreates ID index on entire list
+
+        Required security scopes:
+          * `api:manage`
+      operationId: lists#reindex
+      parameters:
+      - description: |-
+          The ID of the list to apply the operation on.
+          Can be `a` to `z` (both upper/lower case), `0` to `9` or one of these characters `_-.`
+        in: path
+        maxLength: 100
+        minLength: 2
+        name: list_id
+        pattern: ^[a-zA-Z0-9-_.]+$
+        required: true
+        type: string
+      produces:
+      - application/vnd.goa.error
+      - application/vnd.rankdb.ranklist+json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/RankdbRanklistFull'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/error'
+      security:
+      - jwt:
+        - api:manage
+      summary: Reindex list
+      tags:
+      - lists
+  /lists/{list_id}/repair:
+    put:
+      description: |-
+        Repairs the list, by recreating all segments and indexes.
+        All access to the list is blocked while operation runs.
+
+        Required security scopes:
+          * `api:manage`
+      operationId: lists#repair
+      parameters:
+      - default: false
+        description: Clear list if unable to repair
+        in: query
+        name: clear
+        required: false
+        type: boolean
+      - description: |-
+          The ID of the list to apply the operation on.
+          Can be `a` to `z` (both upper/lower case), `0` to `9` or one of these characters `_-.`
+        in: path
+        maxLength: 100
+        minLength: 2
+        name: list_id
+        pattern: ^[a-zA-Z0-9-_.]+$
+        required: true
+        type: string
+      produces:
+      - application/vnd.goa.error
+      - application/vnd.rankdb.listopresult+json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/RankdbListopresult'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/error'
+      security:
+      - jwt:
+        - api:manage
+      summary: Repair list
+      tags:
+      - lists
+  /lists/{list_id}/verify:
+    put:
+      description: |-
+        Verify the list and its elements and optionally repair it.
+        All write access to the list is blocked while operation runs.
+
+        Required security scopes:
+          * `api:manage`
+      operationId: lists#verify
+      parameters:
+      - default: false
+        description: Clear list if unable to repair
+        in: query
+        name: clear
+        required: false
+        type: boolean
+      - description: |-
+          The ID of the list to apply the operation on.
+          Can be `a` to `z` (both upper/lower case), `0` to `9` or one of these characters `_-.`
+        in: path
+        maxLength: 100
+        minLength: 2
+        name: list_id
+        pattern: ^[a-zA-Z0-9-_.]+$
+        required: true
+        type: string
+      - default: false
+        description: Attempt to repair list
+        in: query
+        name: repair
+        required: false
+        type: boolean
+      produces:
+      - application/vnd.goa.error
+      - application/vnd.rankdb.listopresult+json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/RankdbListopresult'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/error'
+      security:
+      - jwt:
+        - api:manage
+      summary: Verify list
+      tags:
+      - lists
+  /xlist/backup:
+    put:
+      description: |-
+        Backup lists.
+        If no lists, nor any search is specified all lists are backed up.A callback is provided to check progress.
+
+        Required security scopes:
+          * `api:manage`
+      operationId: multilist#backup
+      parameters:
+      - in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/MultiListBackup'
+      produces:
+      - application/octet-stream
+      - application/vnd.goa.error
+      - application/vnd.rankdb.callback+json
+      responses:
+        "200":
+          description: Returned when backup type is "download". The raw backup content
+            is returned
+        "201":
+          description: Returned when the operation is started in the background
+          schema:
+            $ref: '#/definitions/RankdbCallback'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/error'
+      security:
+      - jwt:
+        - api:manage
+      summary: Backup lists
+      tags:
+      - multilist
+  /xlist/elements:
+    post:
+      description: |-
+        Create elements in lists
+
+        Required security scopes:
+          * `api:update`
+      operationId: multilist#create
+      parameters:
+      - default: false
+        description: Returns errors only. If disabled, operations will be faster and
+          require less memory.
+        in: query
+        name: errors_only
+        required: false
+        type: boolean
+      - default: false
+        description: Return results of the operation. If disabled, operations will
+          be faster and require less memory.
+        in: query
+        name: results
+        required: false
+        type: boolean
+      - in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/ListPayloadQL'
+      produces:
+      - application/vnd.goa.error
+      - application/vnd.rankdb.resultlist+json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/RankdbResultlist'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/error'
+      security:
+      - jwt:
+        - api:update
+      summary: Create elements in multiple lists
+      tags:
+      - multilist
+    put:
+      description: |-
+        Update multiple elements in lists
+
+        Required security scopes:
+          * `api:update`
+      operationId: multilist#put
+      parameters:
+      - default: false
+        description: Returns errors only. If disabled, operations will be faster and
+          require less memory.
+        in: query
+        name: errors_only
+        required: false
+        type: boolean
+      - default: false
+        description: Return results of the operation. If disabled, operations will
+          be faster and require less memory.
+        in: query
+        name: results
+        required: false
+        type: boolean
+      - in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/ListPayloadQL'
+      produces:
+      - application/vnd.goa.error
+      - application/vnd.rankdb.resultlist+json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/RankdbResultlist'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/error'
+      security:
+      - jwt:
+        - api:update
+      summary: Update Elements in multiple listsResults are always returned.
+      tags:
+      - multilist
+  /xlist/elements/{element_id}:
+    delete:
+      description: |-
+        Delete element in multiple lists.
+        If element is not found the operation is considered a success
+
+        Required security scopes:
+          * `api:delete`
+      operationId: multilist#delete
+      parameters:
+      - collectionFormat: multi
+        description: Include all lists in these sets
+        in: query
+        items:
+          type: string
+        name: all_in_sets
+        required: false
+        type: array
+      - description: ID of element
+        in: path
+        maxLength: 20
+        minLength: 1
+        name: element_id
+        pattern: ^[0-9]+$
+        required: true
+        type: string
+      - default: false
+        description: Returns errors only. If disabled, operations will be faster and
+          require less memory.
+        in: query
+        name: errors_only
+        required: false
+        type: boolean
+      - collectionFormat: multi
+        description: Include lists that match exact list names
+        in: query
+        items:
+          type: string
+        name: lists
+        required: false
+        type: array
+      - description: |-
+          Include lists that match all values in metadata.
+          Payload must be valid json with string->string values.
+          Example: {"country":"dk","game":"match4"}
+        in: query
+        name: match_metadata
+        required: false
+        type: string
+      produces:
+      - application/vnd.goa.error
+      - application/vnd.rankdb.resultlist+json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/RankdbResultlist'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/error'
+      security:
+      - jwt:
+        - api:delete
+      summary: Delete Element in multiple lists
+      tags:
+      - multilist
+    get:
+      description: |-
+        Get Element in multiple lists
+
+        Required security scopes:
+          * `api:read`
+      operationId: multilist#get
+      parameters:
+      - collectionFormat: multi
+        description: Include all lists in these sets
+        in: query
+        items:
+          type: string
+        name: all_in_sets
+        required: false
+        type: array
+      - description: ID of element
+        in: path
+        maxLength: 20
+        minLength: 1
+        name: element_id
+        pattern: ^[0-9]+$
+        required: true
+        type: string
+      - collectionFormat: multi
+        description: Include lists that match exact list names
+        in: query
+        items:
+          type: string
+        name: lists
+        required: false
+        type: array
+      - description: |-
+          Include lists that match all values in metadata.
+          Payload must be valid json with string->string values.
+          Example: {"country":"dk","game":"match4"}
+        in: query
+        name: match_metadata
+        required: false
+        type: string
+      produces:
+      - application/vnd.goa.error
+      - application/vnd.rankdb.resultlist+json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/RankdbResultlist'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/error'
+      security:
+      - jwt:
+        - api:read
+      summary: Get Element in multiple lists
+      tags:
+      - multilist
+  /xlist/reindex:
+    put:
+      description: |-
+        Reindex lists.
+        If no lists, nor any search is specified all lists are reindexed.
+
+        Required security scopes:
+          * `api:manage`
+      operationId: multilist#reindex
+      parameters:
+      - default: false
+        description: Returns errors only. If disabled, operations will be faster and
+          require less memory.
+        in: query
+        name: errors_only
+        required: false
+        type: boolean
+      - in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/ListQL'
+      produces:
+      - application/vnd.goa.error
+      - application/vnd.rankdb.resultlist+json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/RankdbResultlist'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/error'
+      security:
+      - jwt:
+        - api:manage
+      summary: Reindex lists
+      tags:
+      - multilist
+  /xlist/restore:
+    post:
+      description: |-
+        Restore lists. Body must contain binary data with backup data, unless 'src' is specified.
+
+        Required security scopes:
+          * `api:manage`
+      operationId: multilist#restore
+      parameters:
+      - default: false
+        description: Keep existing lists. Only restore missing lists
+        in: query
+        name: keep
+        required: false
+        type: boolean
+      - description: |-
+          Optional alternative list id prefix.
+          If not provided the original list id/segment ids will be used and any existing list will be overwritten.
+        in: query
+        name: list_id_prefix
+        required: false
+        type: string
+      - description: |-
+          Optional alternative list id suffix.
+          If not provided the original list id/segment ids will be used and any existing list will be overwritten.
+        in: query
+        name: list_id_suffix
+        required: false
+        type: string
+      - default: ""
+        description: |-
+          The body will not contain any data. Instead load data from provided URL.
+          The call will return when the backup has finished.
+          If the source is s3, the source should be defined as s3://bucket/path/file.bin. Replace bucket and path+file
+        in: query
+        name: src
+        required: false
+        type: string
+      - default: ""
+        description: |-
+          The body will not contain any data. Instead load data from file from this path.
+          The call will return when the backup has finished.
+        in: query
+        name: src_file
+        required: false
+        type: string
+      produces:
+      - application/vnd.goa.error
+      - application/vnd.rankdb.restoreresult+json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/RankdbRestoreresult'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/error'
+      security:
+      - jwt:
+        - api:manage
+      summary: Restore lists
+      tags:
+      - multilist
+  /xlist/verify:
+    put:
+      description: |-
+        Verify lists.
+        If no lists, nor any search is specified all lists are checked.
+
+        Required security scopes:
+          * `api:manage`
+      operationId: multilist#verify
+      parameters:
+      - default: false
+        description: Clear list if unable to repair
+        in: query
+        name: clear
+        required: false
+        type: boolean
+      - default: false
+        description: Verify elements as well
+        in: query
+        name: elements
+        required: false
+        type: boolean
+      - default: false
+        description: Returns errors only. If disabled, operations will be faster and
+          require less memory.
+        in: query
+        name: errors_only
+        required: false
+        type: boolean
+      - default: false
+        description: Repair lists with problems automatically.
+        in: query
+        name: repair
+        required: false
+        type: boolean
+      - in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/ListQL'
+      produces:
+      - application/vnd.goa.error
+      - application/vnd.rankdb.resultlist+json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/RankdbResultlist'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/error'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/error'
+      security:
+      - jwt:
+        - api:manage
+      summary: Verify lists
+      tags:
+      - multilist
+produces:
+- application/json
+- application/msgpack
+responses:
+  NoContent:
+    description: No Content
+securityDefinitions:
+  jwt:
+    description: |2-
+
+
+      **Security Scopes**:
+        * `api:delete`: API Delete Access.
+        * `api:manage`: API Manager Access.
+        * `api:read`: API Read Access
+        * `api:update`: API Update Access.
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
