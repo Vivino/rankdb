@@ -559,7 +559,9 @@ func (l *LazySaver) Shutdown() {
 
 // Stats returns stats.
 func (l *LazySaver) Stats() LazyStats {
+	l.statsMu.Lock()
 	s := l.stats
+	l.statsMu.Unlock()
 	l.mu.RLock()
 	for e := l.cache.Front(); e != nil; e = e.Next() {
 		s.ItemQueue++
