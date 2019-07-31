@@ -24,6 +24,7 @@ clean:
 
 generate: install
 	go install github.com/tinylib/msgp
+	go install github.com/goadesign/goa/goagen
 	go generate ${PROJECT}
 	go generate ${PROJECT}/api
 	goimports -w .
@@ -39,6 +40,7 @@ build: install
 	${BUILD_ARCH} go build -o bin/go-ranks-cli  ${PROJECT}/api/tool/rankdb-cli
 
 dist: build
+	go install github.com/goreleaser/goreleaser
 	goreleaser --snapshot --skip-publish --rm-dist
 
 install:
@@ -48,3 +50,7 @@ install:
 
 commit:
 	@echo ${COMMIT_SHORT}
+
+push-image:
+	docker push ${IMAGE}:${VERSION}
+	docker push ${IMAGE}:latest
