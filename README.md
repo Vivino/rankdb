@@ -49,10 +49,30 @@ go get -u github.com/Vivino/rankdb/cmd/rankdb
 
 You can now open the documentation/sample UI on http://127.0.0.1:8080
 
-
 ## Docker
 
-// TODO
+A Dockerfile is included. You can download the docker image from docker hub:
+
+```
+// TODO, something like:
+
+docker pull vivino/rankdb
+docker run -e "GOGC=25" -p 8080:8080 -v /mnt/data:/data -v /mnt/conf:/conf vivino/rankdb
+```
+
+By default the server will start on port 8080, which you can of course remap to a local port.
+
+The following paths can/should be set:
+ 
+ * `/conf` should contain a `conf.toml` file with your configuration.
+ * `/data` should point to where you want the local DB to be stored if you use one.
+ * `/jwtkeys` can be used to add jwt keys. Set `JwtKeyPath = "/jwtkeys"` in your config.  
+
+## Sample Data
+
+You can try out a test data set you can [download here](https://github.com/Vivino/rankdb/releases/tag/sample).
+
+It will add some rather large tables to your database and you can test queries, etc. on that.
 
 ## Glossary
 

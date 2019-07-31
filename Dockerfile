@@ -30,6 +30,7 @@ COPY deploy/docker-entrypoint.sh /usr/bin/
 
 VOLUME ["/data"]
 VOLUME ["/conf"]
+VOLUME ["/jwtkeys"]
 
 HEALTHCHECK --interval=1m CMD rankdb-cli --timeout=1s health health
 
