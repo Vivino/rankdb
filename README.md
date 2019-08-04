@@ -32,7 +32,7 @@ You can copy this to `conf/conf.toml` and adjust it to your needs.
 * Copy the configuration as described above
 * Execute `rankdb`
 
-You can now open the documentation/sample UI on http://127.0.0.1:8080
+You can now open the documentation/sample UI on http://127.0.0.1:8080/doc
 
 ## Go
 
@@ -47,7 +47,7 @@ go get -u github.com/Vivino/rankdb/cmd/rankdb
 * Copy the configuration as described above.
 * Execute `rankdb`.
 
-You can now open the documentation/sample UI on http://127.0.0.1:8080
+You can now open the documentation/sample UI on http://127.0.0.1:8080/doc
 
 ## Docker
 
