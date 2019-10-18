@@ -12,8 +12,9 @@ go:
   - master
 
 env:
-  - DOCKER_USER=vivino
-  - GO111MODULE=on
+  global: 
+    - DOCKER_USER=vivino
+    - GO111MODULE=on
 
 # needed for the docker pipe
 services:
