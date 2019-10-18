@@ -23,7 +23,7 @@ services:
 
 script:
  - diff <(gofmt -d .) <(printf "")
- - go test -v ./...
+ - go test ./...
  - go test -cpu=1,2,4 -short -race ./...
  - GOOS=linux GOARCH=386 go install ./...
 
@@ -35,7 +35,7 @@ matrix:
 after_success:
   # docker login is required if you want to push docker images.
   # DOCKER_PASSWORD should be a secret in your .travis.yml configuration.
-  - test -n "$TRAVIS_TAG" && docker login -u="$DOCKER_USER" -p="$DOCKER_PASSWORD"
+  # - test -n "$TRAVIS_TAG" && docker login -u="$DOCKER_USER" -p="$DOCKER_PASSWORD"
 
 # calls goreleaser
 deploy:
