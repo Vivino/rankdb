@@ -12,14 +12,12 @@ go:
   - master
 
 env:
-  - GO111MODULE=on
-  # needed for docker deploy:
   - DOCKER_USER=vivino
+  - GO111MODULE=on
 
 # needed for the docker pipe
 services:
   - docker
-
 
 script:
  - diff <(gofmt -d .) <(printf "")
