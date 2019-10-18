@@ -222,7 +222,7 @@ func randElements(n int, seed ...int64) []*client.Element {
 	return res
 }
 
-// randElements will generate a list with n random elements.
+// createList will generate a list with n random elements.
 // All elements will have ID and score above 10000.
 func createList(t *testing.T, id string, elements int) {
 	t.Helper()
