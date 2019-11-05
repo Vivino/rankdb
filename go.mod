@@ -44,3 +44,5 @@ require (
 	golang.org/x/lint v0.0.0-20190409202823-959b441ac422
 	gopkg.in/ini.v1 v1.42.0 // indirect
 )
+
+go 1.13

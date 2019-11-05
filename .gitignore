@@ -30,3 +30,4 @@ data/
 # Capistrano related
 .bundle
 /.idea
+/conf/conf.toml
