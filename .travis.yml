@@ -15,6 +15,7 @@ env:
   global: 
     - DOCKER_USER=vivino
     - GO111MODULE=on
+    - GOPROXY=https://proxy.golang.org
 
 # needed for the docker pipe
 services:
