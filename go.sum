@@ -186,10 +186,14 @@ github.com/kamilsk/retry/v4 v4.0.0/go.mod h1:0af33qDvzbhQqdOBi7iOjEpmP4brbPmNZpo
 github.com/kisielk/gotool v1.0.0/go.mod h1:XhKaO+MFFWcvkIS/tQcRk01m1F5IRFswLeQ+oQHNcck=
 github.com/klauspost/compress v1.7.4 h1:4UqAIzZ1Ns2epCTyJ1d2xMWvxtX+FNSCYWeOFogK9nc=
 github.com/klauspost/compress v1.7.4/go.mod h1:RyIbtBH6LamlWaDj8nUwkbUhJ87Yi3uG0guNDohfE1A=
+github.com/klauspost/compress v1.9.1 h1:TWy0o9J9c6LK9C8t7Msh6IAJNXbsU/nvKLTQUU5HdaY=
+github.com/klauspost/compress v1.9.1/go.mod h1:RyIbtBH6LamlWaDj8nUwkbUhJ87Yi3uG0guNDohfE1A=
 github.com/klauspost/cpuid v1.2.1 h1:vJi+O/nMdFt0vqm8NZBI6wzALWdA2X+egi0ogNyrC/w=
 github.com/klauspost/cpuid v1.2.1/go.mod h1:Pj4uuM528wm8OyEC2QMXAi2YiTZ96dNQPGgoMS4s3ek=
 github.com/klauspost/readahead v1.3.0 h1:ur57scQa1RS6oQgdq+6mylmP2u0iR1LFw1zy3Xwqacg=
 github.com/klauspost/readahead v1.3.0/go.mod h1:AH9juHzNH7xqdqFHrMRSHeH2Ps+vFf+kblDqzPFiLJg=
+github.com/klauspost/readahead v1.3.1 h1:QqXNYvm+VvqYcbrRT4LojUciM0XrznFRIDrbHiJtu/0=
+github.com/klauspost/readahead v1.3.1/go.mod h1:AH9juHzNH7xqdqFHrMRSHeH2Ps+vFf+kblDqzPFiLJg=
 github.com/klauspost/shutdown2 v1.1.0 h1:Ko7jOzYA2U1yjCOIKVKOhJMwEVHPgFmfG41pE8ozbUs=
 github.com/klauspost/shutdown2 v1.1.0/go.mod h1:mBV6CN9vNPEhvb8sPeC+qZnt2HxY2ziPnlSGgZkYNTQ=
 github.com/konsorten/go-windows-terminal-sequences v1.0.1 h1:mweAR1A6xJ3oS2pRaGiHgQ4OO8tzTaLawm8vnODuwDk=
