@@ -20,9 +20,9 @@ require (
 	github.com/hashicorp/go-immutable-radix v0.0.0-20170725221215-8aac27015308 // indirect
 	github.com/hashicorp/golang-lru v0.5.1
 	github.com/hashicorp/uuid v0.0.0-20160311170451-ebb0a03e909c // indirect
-	github.com/klauspost/compress v1.7.4
+	github.com/klauspost/compress v1.9.1
 	github.com/klauspost/cpuid v1.2.1 // indirect
-	github.com/klauspost/readahead v1.3.0
+	github.com/klauspost/readahead v1.3.1
 	github.com/klauspost/shutdown2 v1.1.0
 	github.com/manveru/faker v0.0.0-20160419072036-717f7cf83fb7 // indirect
 	github.com/manveru/gobdd v0.0.0-20131210092515-f1a17fdd710b // indirect
