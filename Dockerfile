@@ -23,6 +23,8 @@ EXPOSE 8080
 
 COPY --from=0 /go/bin/rankdb /usr/bin/rankdb
 COPY --from=0 /go/bin/rankdb-cli /usr/bin/rankdb-cli
+COPY api/public /api/public
+COPY api/swagger /api/swagger
 COPY conf/conf.stub.toml /conf/conf.toml
 COPY cmd/docker-entrypoint.sh /usr/bin/
 
