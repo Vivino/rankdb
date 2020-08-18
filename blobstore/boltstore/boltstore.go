@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/Vivino/rankdb/blobstore"
-	"github.com/etcd-io/bbolt"
+	"go.etcd.io/bbolt"
 )
 
 // NewBoltStore returns a new BoltStore.
