@@ -7,7 +7,6 @@ os:
   - osx
 
 go:
-  - 1.14.x
   - 1.15.x
   - master
 
@@ -44,5 +43,5 @@ deploy:
     script: curl -sL https://git.io/goreleaser | bash
     on:
       tags: true
-      go: '1.14.x'
+      go: '1.15.x'
       condition: $TRAVIS_OS_NAME = linux
