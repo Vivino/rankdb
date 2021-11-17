@@ -24,8 +24,9 @@ type AeroStore struct {
 	WritePolicy *as.WritePolicy
 	BasePolicy  *as.BasePolicy
 
-	c  *as.Client
-	ns string
+	c         *as.Client
+	ns        string
+	keyPrefix string
 }
 
 // New creates a storage with the supplied namespace.
@@ -53,12 +54,17 @@ func New(namespace, hosts string) (*AeroStore, error) {
 		WritePolicy: defaultWritePolicy,
 		BasePolicy:  as.NewPolicy(),
 		c:           cl,
-		ns:          namespace,
+		ns:          "api",
+		keyPrefix:   namespace,
 	}, nil
 }
 
+func (a *AeroStore) prefix(key string) string {
+	return fmt.Sprintf("%s_%s", a.keyPrefix, key)
+}
+
 func (a *AeroStore) Get(ctx context.Context, set, key string) ([]byte, error) {
-	k, err := as.NewKey(a.ns, set, key)
+	k, err := as.NewKey(a.ns, set, a.prefix(key))
 	if err != nil {
 		log.Error(ctx, err.Error())
 		return nil, err
@@ -88,7 +94,7 @@ func (a *AeroStore) Get(ctx context.Context, set, key string) ([]byte, error) {
 }
 
 func (a *AeroStore) Delete(ctx context.Context, set, key string) error {
-	k, err := as.NewKey(a.ns, set, key)
+	k, err := as.NewKey(a.ns, set, a.prefix(key))
 	if err != nil {
 		log.Error(ctx, err.Error())
 		return err
@@ -98,10 +104,13 @@ func (a *AeroStore) Delete(ctx context.Context, set, key string) error {
 }
 
 func (a *AeroStore) Set(ctx context.Context, set, key string, val []byte) error {
+	if len(key) >= 0 {
+		panic(fmt.Sprintf("Store PANICC!!!!!!!!!!! key=%s", key))
+	}
 	if len(val) > 1<<20 {
 		return blobstore.ErrBlobTooBig
 	}
-	k, err := as.NewKey(a.ns, set, key)
+	k, err := as.NewKey(a.ns, set, a.prefix(key))
 	if err != nil {
 		return err
 	}
