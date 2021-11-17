@@ -71,6 +71,7 @@ var (
 		Aerospike           struct {
 			Hosts          string
 			Namespace      string
+			KeyPrefix      string
 			WriteBlockSize int // See http://www.aerospike.com/docs/reference/configuration#write-block-size
 		}
 
@@ -300,7 +301,7 @@ func newBlobstore(ctx context.Context, s string) (store blobstore.Store, closers
 	case "Memory":
 		store = memstore.NewMemStore()
 	case "Aerospike":
-		as, err := aerostore.New(config.Aerospike.Namespace, config.Aerospike.Hosts)
+		as, err := aerostore.New(config.Aerospike.Namespace, config.Aerospike.KeyPrefix, config.Aerospike.Hosts)
 		if err != nil {
 			return nil, nil, err
 		}

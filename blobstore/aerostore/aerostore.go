@@ -34,7 +34,7 @@ type AeroStore struct {
 // If no port is given on hosts, port 3000 is assumed.
 // It is highly recommended to include a MaxSizeStore prior to this
 // matching maximum storage size.
-func New(namespace, hosts string) (*AeroStore, error) {
+func New(namespace, keyPrefix, hosts string) (*AeroStore, error) {
 	var h []*as.Host
 	for _, hwp := range parseHosts(hosts, 3000) {
 		h = append(h, as.NewHost(hwp.Name, hwp.Port))
@@ -54,12 +54,15 @@ func New(namespace, hosts string) (*AeroStore, error) {
 		WritePolicy: defaultWritePolicy,
 		BasePolicy:  as.NewPolicy(),
 		c:           cl,
-		ns:          "api",
-		keyPrefix:   namespace,
+		ns:          namespace,
+		keyPrefix:   keyPrefix,
 	}, nil
 }
 
 func (a *AeroStore) prefix(key string) string {
+	if a.keyPrefix == "" {
+		return key
+	}
 	return fmt.Sprintf("%s_%s", a.keyPrefix, key)
 }
 
@@ -104,9 +107,6 @@ func (a *AeroStore) Delete(ctx context.Context, set, key string) error {
 }
 
 func (a *AeroStore) Set(ctx context.Context, set, key string, val []byte) error {
-	if len(key) >= 0 {
-		panic(fmt.Sprintf("Store PANICC!!!!!!!!!!! key=%s", key))
-	}
 	if len(val) > 1<<20 {
 		return blobstore.ErrBlobTooBig
 	}
