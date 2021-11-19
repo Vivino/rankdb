@@ -84,6 +84,8 @@ BackupEvery = 10
 Hosts = ""
 # Namespace used for storage.
 Namespace = "api"
+# KeyPrefix used to isolate keys in namespaces
+KeyPrefix = ""
 # Must match write-block-size of server.
 # See http://www.aerospike.com/docs/reference/configuration#write-block-size
 WriteBlockSize = 1048576

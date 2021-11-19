@@ -24,8 +24,9 @@ type AeroStore struct {
 	WritePolicy *as.WritePolicy
 	BasePolicy  *as.BasePolicy
 
-	c  *as.Client
-	ns string
+	c         *as.Client
+	ns        string
+	keyPrefix string
 }
 
 // New creates a storage with the supplied namespace.
@@ -33,7 +34,7 @@ type AeroStore struct {
 // If no port is given on hosts, port 3000 is assumed.
 // It is highly recommended to include a MaxSizeStore prior to this
 // matching maximum storage size.
-func New(namespace, hosts string) (*AeroStore, error) {
+func New(namespace, keyPrefix, hosts string) (*AeroStore, error) {
 	var h []*as.Host
 	for _, hwp := range parseHosts(hosts, 3000) {
 		h = append(h, as.NewHost(hwp.Name, hwp.Port))
@@ -54,11 +55,19 @@ func New(namespace, hosts string) (*AeroStore, error) {
 		BasePolicy:  as.NewPolicy(),
 		c:           cl,
 		ns:          namespace,
+		keyPrefix:   keyPrefix,
 	}, nil
 }
 
+func (a *AeroStore) prefix(key string) string {
+	if a.keyPrefix == "" {
+		return key
+	}
+	return fmt.Sprintf("%s_%s", a.keyPrefix, key)
+}
+
 func (a *AeroStore) Get(ctx context.Context, set, key string) ([]byte, error) {
-	k, err := as.NewKey(a.ns, set, key)
+	k, err := as.NewKey(a.ns, set, a.prefix(key))
 	if err != nil {
 		log.Error(ctx, err.Error())
 		return nil, err
@@ -88,7 +97,7 @@ func (a *AeroStore) Get(ctx context.Context, set, key string) ([]byte, error) {
 }
 
 func (a *AeroStore) Delete(ctx context.Context, set, key string) error {
-	k, err := as.NewKey(a.ns, set, key)
+	k, err := as.NewKey(a.ns, set, a.prefix(key))
 	if err != nil {
 		log.Error(ctx, err.Error())
 		return err
@@ -101,7 +110,7 @@ func (a *AeroStore) Set(ctx context.Context, set, key string, val []byte) error 
 	if len(val) > 1<<20 {
 		return blobstore.ErrBlobTooBig
 	}
-	k, err := as.NewKey(a.ns, set, key)
+	k, err := as.NewKey(a.ns, set, a.prefix(key))
 	if err != nil {
 		return err
 	}
