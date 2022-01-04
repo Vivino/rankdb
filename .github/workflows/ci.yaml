@@ -24,19 +24,14 @@ jobs:
         uses: actions/setup-go@v2
         with:
           go-version: ${{ matrix.go-version }}
-      -
-        name: Cache Go modules
-        uses: actions/cache@v1
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v2
         with:
-          path: ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-go-
+          version: v2.5.2
       -
         name: Tests
         run: |
           go mod tidy
-          diff <(gofmt -d .) <(printf "")
           go test -v ./...
           go test -cpu=1 -short -race ./...
           go test -cpu=4 -short -race ./...
