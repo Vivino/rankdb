@@ -27,7 +27,7 @@ jobs:
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v2
         with:
-          version: v2.5.2
+          version: v1.43
       -
         name: Tests
         run: |
@@ -37,6 +37,7 @@ jobs:
           go test -cpu=4 -short -race ./...
 
   go-releaser-check:
+    needs: build
     runs-on: ubuntu-latest
     steps:
     - name: Set up Go
