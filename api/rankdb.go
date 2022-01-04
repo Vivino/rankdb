@@ -365,3 +365,7 @@ type lruWrapper struct {
 func (l lruWrapper) Add(k, v interface{}) {
 	l.Cache.Add(k, v)
 }
+
+func (l lruWrapper) Remove(k interface{}) {
+	l.Cache.Remove(k)
+}
