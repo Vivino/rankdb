@@ -23,7 +23,7 @@ jobs:
         name: Set up Go
         uses: actions/setup-go@v2
         with:
-          go-version: ${{ matrix.go }}
+          go-version: ${{ matrix.go-version }}
       -
         name: Cache Go modules
         uses: actions/cache@v1
@@ -41,3 +41,19 @@ jobs:
           go test -cpu=1 -short -race ./...
           go test -cpu=4 -short -race ./...
 
+  go-releaser-check:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Set up Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: 1.16.x
+
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: goreleaser deprecation
+      run: curl -sfL https://git.io/goreleaser | VERSION=v1.2.5 sh -s -- check
+
+    - name: goreleaser snapshot
+      run: curl -sL https://git.io/goreleaser | VERSION=v1.2.5 sh -s -- --snapshot --skip-publish --rm-dist
