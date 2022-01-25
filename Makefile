@@ -25,6 +25,7 @@ clean:
 generate: install
 	go install github.com/tinylib/msgp
 	go install github.com/goadesign/goa/goagen
+	go install golang.org/x/tools/cmd/goimports
 	go generate ${PROJECT}
 	go generate ${PROJECT}/api
 	goimports -w .

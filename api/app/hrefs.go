@@ -6,6 +6,6 @@
 // $ goagen
 // --design=github.com/Vivino/rankdb/api/design
 // --out=$(GOPATH)/src/github.com/Vivino/rankdb/api
-// --version=v1.3.1
+// --version=v1.4.1
 
 package app

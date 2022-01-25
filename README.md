@@ -1,6 +1,6 @@
 # RankDB
 
-[![Build Status](https://travis-ci.com/Vivino/rankdb.svg?branch=master)](https://travis-ci.com/Vivino/rankdb)
+![Build Status](https://github.com/Vivino/rankdb/actions/workflows/ci.yaml/badge.svg)
 
 
 RankDB is a fast and scalable ranking system optimized for realtime ranking of various metrics.
