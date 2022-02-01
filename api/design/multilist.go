@@ -146,12 +146,17 @@ var _ = Resource("multilist", func() {
 			Param("list_id_suffix", String, func() {
 				Description("Optional alternative list id suffix.\n" +
 					"If not provided the original list id/segment ids will be used and any existing list will be overwritten.")
-				Example("restored-")
+				Example("-restored")
 			})
 			Param("list_id_prefix", String, func() {
 				Description("Optional alternative list id prefix.\n" +
 					"If not provided the original list id/segment ids will be used and any existing list will be overwritten.")
-				Example("-restored")
+				Example("restored-")
+			})
+			Param("set_prefix", String, func() {
+				Description("Optional alternative prefix for the set.\n" +
+					"If not provided the original set for the list will be used.")
+				Example("namespace-")
 			})
 			Param("keep", Boolean, func() {
 				Description("Keep existing lists. Only restore missing lists")

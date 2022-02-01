@@ -758,7 +758,7 @@ func TestListBackup(t *testing.T) {
 	b := w.Buffer().Bytes()
 	t.Log("List bytes", len(b))
 	r := rankdb.NewReaderMsgp(b)
-	l2, err := rankdb.RestoreList(ctx, store, r, nil, nil)
+	l2, err := rankdb.RestoreList(ctx, store, r, nil, nil, "")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -814,7 +814,7 @@ func TestListRestore(t *testing.T) {
 	t.Logf("List bytes: %v, %.02f bytes/element (uncompressed)", len(b), float64(len(b))/float64(n))
 	r := rankdb.NewReaderMsgp(b)
 	newID := rankdb.ListID("new-test-list")
-	l2, err := rankdb.RestoreList(ctx, store, r, nil, &newID)
+	l2, err := rankdb.RestoreList(ctx, store, r, nil, &newID, "")
 	if err != nil {
 		t.Fatal(err)
 	}

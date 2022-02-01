@@ -1784,7 +1784,7 @@ func ReindexMultilistUnauthorized(t goatest.TInterface, ctx context.Context, ser
 // It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func RestoreMultilistBadRequest(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.MultilistController, keep bool, listIDPrefix *string, listIDSuffix *string, src string, srcFile string) (http.ResponseWriter, error) {
+func RestoreMultilistBadRequest(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.MultilistController, keep bool, listIDPrefix *string, listIDSuffix *string, setPrefix *string, src string, srcFile string) (http.ResponseWriter, error) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -1817,6 +1817,10 @@ func RestoreMultilistBadRequest(t goatest.TInterface, ctx context.Context, servi
 		sliceVal := []string{*listIDSuffix}
 		query["list_id_suffix"] = sliceVal
 	}
+	if setPrefix != nil {
+		sliceVal := []string{*setPrefix}
+		query["set_prefix"] = sliceVal
+	}
 	{
 		sliceVal := []string{src}
 		query["src"] = sliceVal
@@ -1845,6 +1849,10 @@ func RestoreMultilistBadRequest(t goatest.TInterface, ctx context.Context, servi
 	if listIDSuffix != nil {
 		sliceVal := []string{*listIDSuffix}
 		prms["list_id_suffix"] = sliceVal
+	}
+	if setPrefix != nil {
+		sliceVal := []string{*setPrefix}
+		prms["set_prefix"] = sliceVal
 	}
 	{
 		sliceVal := []string{src}
@@ -1894,7 +1902,7 @@ func RestoreMultilistBadRequest(t goatest.TInterface, ctx context.Context, servi
 // It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func RestoreMultilistOK(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.MultilistController, keep bool, listIDPrefix *string, listIDSuffix *string, src string, srcFile string) (http.ResponseWriter, *app.RankdbRestoreresult) {
+func RestoreMultilistOK(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.MultilistController, keep bool, listIDPrefix *string, listIDSuffix *string, setPrefix *string, src string, srcFile string) (http.ResponseWriter, *app.RankdbRestoreresult) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -1927,6 +1935,10 @@ func RestoreMultilistOK(t goatest.TInterface, ctx context.Context, service *goa.
 		sliceVal := []string{*listIDSuffix}
 		query["list_id_suffix"] = sliceVal
 	}
+	if setPrefix != nil {
+		sliceVal := []string{*setPrefix}
+		query["set_prefix"] = sliceVal
+	}
 	{
 		sliceVal := []string{src}
 		query["src"] = sliceVal
@@ -1955,6 +1967,10 @@ func RestoreMultilistOK(t goatest.TInterface, ctx context.Context, service *goa.
 	if listIDSuffix != nil {
 		sliceVal := []string{*listIDSuffix}
 		prms["list_id_suffix"] = sliceVal
+	}
+	if setPrefix != nil {
+		sliceVal := []string{*setPrefix}
+		prms["set_prefix"] = sliceVal
 	}
 	{
 		sliceVal := []string{src}
@@ -2009,7 +2025,7 @@ func RestoreMultilistOK(t goatest.TInterface, ctx context.Context, service *goa.
 // It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func RestoreMultilistUnauthorized(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.MultilistController, keep bool, listIDPrefix *string, listIDSuffix *string, src string, srcFile string) (http.ResponseWriter, error) {
+func RestoreMultilistUnauthorized(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.MultilistController, keep bool, listIDPrefix *string, listIDSuffix *string, setPrefix *string, src string, srcFile string) (http.ResponseWriter, error) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -2042,6 +2058,10 @@ func RestoreMultilistUnauthorized(t goatest.TInterface, ctx context.Context, ser
 		sliceVal := []string{*listIDSuffix}
 		query["list_id_suffix"] = sliceVal
 	}
+	if setPrefix != nil {
+		sliceVal := []string{*setPrefix}
+		query["set_prefix"] = sliceVal
+	}
 	{
 		sliceVal := []string{src}
 		query["src"] = sliceVal
@@ -2070,6 +2090,10 @@ func RestoreMultilistUnauthorized(t goatest.TInterface, ctx context.Context, ser
 	if listIDSuffix != nil {
 		sliceVal := []string{*listIDSuffix}
 		prms["list_id_suffix"] = sliceVal
+	}
+	if setPrefix != nil {
+		sliceVal := []string{*setPrefix}
+		prms["set_prefix"] = sliceVal
 	}
 	{
 		sliceVal := []string{src}

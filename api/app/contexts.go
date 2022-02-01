@@ -2236,6 +2236,7 @@ type RestoreMultilistContext struct {
 	Keep         bool
 	ListIDPrefix *string
 	ListIDSuffix *string
+	SetPrefix    *string
 	Src          string
 	SrcFile      string
 }
@@ -2269,6 +2270,11 @@ func NewRestoreMultilistContext(ctx context.Context, r *http.Request, service *g
 	if len(paramListIDSuffix) > 0 {
 		rawListIDSuffix := paramListIDSuffix[0]
 		rctx.ListIDSuffix = &rawListIDSuffix
+	}
+	paramSetPrefix := req.Params["set_prefix"]
+	if len(paramSetPrefix) > 0 {
+		rawSetPrefix := paramSetPrefix[0]
+		rctx.SetPrefix = &rawSetPrefix
 	}
 	paramSrc := req.Params["src"]
 	if len(paramSrc) == 0 {

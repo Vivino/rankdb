@@ -25,8 +25,10 @@ type RestoreInfo struct {
 
 	// ListIDPrefix contains a prefix to apply to all lists.
 	ListIDPrefix string
-	// ListIDPrefix contains a suffix to apply to all lists.
+	// ListIDSuffix contains a suffix to apply to all lists.
 	ListIDSuffix string
+	// SetPrefix contains a prefix to apply to set used for lists.
+	SetPrefix string
 }
 
 // RestoreResult is the result of a restore operation that completed.
@@ -94,7 +96,7 @@ func (ri *RestoreInfo) Restore(ctx context.Context) (*RestoreResult, error) {
 			}
 		}
 
-		lst, err := rankdb.RestoreList(ctx, db.Storage, rankdb.NewReaderMsgp(b), ri.Cache, &dstLstID)
+		lst, err := rankdb.RestoreList(ctx, db.Storage, rankdb.NewReaderMsgp(b), ri.Cache, &dstLstID, ri.SetPrefix)
 		if err != nil {
 			res.Failed[string(dstLstID)] = err.Error()
 			log.Error(ctx, "Error Restoring List", "list_id", dstLstID, "error", err.Error())

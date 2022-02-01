@@ -1917,7 +1917,7 @@ func (l *List) Backup(ctx context.Context, bs blobstore.Store, w *WriterMsgp) er
 // RestoreList will restore a list.
 // If "newID" is provided, the list is saved with its new new and segments are given new ids.
 // Otherwise the exact same list is restored.
-func RestoreList(ctx context.Context, bs blobstore.Store, r *ReaderMsgp, c Cache, newID *ListID) (*List, error) {
+func RestoreList(ctx context.Context, bs blobstore.Store, r *ReaderMsgp, c Cache, newID *ListID, setPrefix string) (*List, error) {
 	l := newList(c, nil)
 	if r.GetVersion() != backupVersion {
 		log.Error(ctx, "RestoreList: backupVersion mismatch")
@@ -1929,6 +1929,9 @@ func RestoreList(ctx context.Context, bs blobstore.Store, r *ReaderMsgp, c Cache
 	}
 	if newID != nil {
 		l.ID = *newID
+	}
+	if setPrefix != "" {
+		l.Set = setPrefix + l.Set
 	}
 	ctx = log.WithFn(ctx, "list_id", l.ID)
 	store := blobstore.StoreWithSet(bs, l.Set)
