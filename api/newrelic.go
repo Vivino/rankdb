@@ -30,6 +30,7 @@ type NewRelicOptions struct {
 	TxTracerThreshold duration
 	ExcludeAttributes []string
 	HostDisplayName   string
+	Disabled          bool
 }
 
 type newRelic struct {
@@ -39,6 +40,10 @@ type newRelic struct {
 var nrApp *newRelic
 
 func InitNewRelic(ctx context.Context, o NewRelicOptions) {
+	if o.Disabled {
+		log.Info(ctx, "New Relic agent disabled by config")
+		return
+	}
 	nrCfg := newrelic.NewConfig(o.AppName, o.License)
 	if len(o.ExcludeAttributes) > 0 {
 		nrCfg.Attributes.Exclude = append(nrCfg.Attributes.Exclude, o.ExcludeAttributes...)

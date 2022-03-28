@@ -48,6 +48,7 @@ func StartServices(logger goa.LogAdapter, ctx context.Context, err error) {
 	service.Use(middleware.RequestID())
 	service.Use(middleware.LogRequest(false))
 	service.Use(NewRelicTx())
+	service.Use(DatadogTx())
 	service.Use(middleware.ErrorHandler(service, true))
 	service.Use(middleware.Recover())
 	service.Use(ShutdownMiddleware)
