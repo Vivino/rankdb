@@ -35,18 +35,20 @@ func (dd *datadogApp) Enabled() bool {
 }
 
 var ddApp *datadogApp
+var gitcommit string
 
-func InitDatadog(ctx context.Context, o DatadogOptions, version string) {
+func InitDatadog(ctx context.Context, o DatadogOptions) {
 	dd := datadogApp{
 		enabled: o.Enabled,
 	}
 	if !dd.enabled {
+		log.Info(ctx, "Datadog disabled by config")
 		return
 	}
-
+	log.Info(ctx, "Datadog enabled")
 	tracer.Start(
 		tracer.WithService(o.Name),
-		tracer.WithServiceVersion(version),
+		tracer.WithServiceVersion(gitcommit),
 	)
 
 	shutdown.ThirdFn(func() {
