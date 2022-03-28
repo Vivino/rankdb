@@ -20,7 +20,6 @@ import (
 
 type DatadogOptions struct {
 	Name    string
-	Version string
 	Enabled bool
 }
 
@@ -37,7 +36,7 @@ func (dd *datadogApp) Enabled() bool {
 
 var ddApp *datadogApp
 
-func InitDatadog(ctx context.Context, o DatadogOptions) {
+func InitDatadog(ctx context.Context, o DatadogOptions, version string) {
 	dd := datadogApp{
 		enabled: o.Enabled,
 	}
@@ -47,7 +46,7 @@ func InitDatadog(ctx context.Context, o DatadogOptions) {
 
 	tracer.Start(
 		tracer.WithService(o.Name),
-		tracer.WithServiceVersion(o.Version),
+		tracer.WithServiceVersion(version),
 	)
 
 	shutdown.ThirdFn(func() {
