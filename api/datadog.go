@@ -41,7 +41,7 @@ func InitDatadog(ctx context.Context, o DatadogOptions) {
 	dd := datadogApp{
 		enabled: o.Enabled,
 	}
-	if !dd.enabled {
+	if !dd.Enabled() {
 		log.Info(ctx, "Datadog disabled by config")
 		return
 	}
@@ -50,11 +50,12 @@ func InitDatadog(ctx context.Context, o DatadogOptions) {
 		// tracer.WithService(o.Name), name is set on the agent
 		tracer.WithServiceVersion(gitcommit),
 	)
-
+	log.Info(ctx, "Datadog tracer started")
 	shutdown.ThirdFn(func() {
 		// When the tracer is stopped, it will flush everything it has to the Datadog Agent before quitting.
 		// Make sure this line stays in your main function.
 		tracer.Stop()
+		log.Info(ctx, "Datadog tracer stopped")
 	})
 }
 
@@ -72,7 +73,7 @@ func DatadogTx() goa.Middleware {
 				tracer.SpanType("web"),
 				tracer.ResourceName(goa.ContextController(ctx)+"."+goa.ContextAction(ctx)),
 			)
-
+			log.Info(ctx, "Datadog span started")
 			span.SetTag("http.url", r.URL.Path)
 			span.SetTag("source_ip", from(req))
 
@@ -117,6 +118,7 @@ func DatadogTx() goa.Middleware {
 				} else {
 					span.Finish()
 				}
+				log.Info(ctx, "Datadog span stopped")
 			}()
 			err = h(ctx, rw, req)
 			return err
