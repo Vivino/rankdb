@@ -41,6 +41,7 @@ func InitDatadog(ctx context.Context, o DatadogOptions) {
 	dd := datadogApp{
 		enabled: o.Enabled,
 	}
+	ddApp = &dd
 	if !dd.Enabled() {
 		log.Info(ctx, "Datadog disabled by config")
 		return
@@ -73,7 +74,7 @@ func DatadogTx() goa.Middleware {
 				tracer.SpanType("web"),
 				tracer.ResourceName(goa.ContextController(ctx)+"."+goa.ContextAction(ctx)),
 			)
-			log.Info(ctx, "Datadog span started")
+
 			span.SetTag("http.url", r.URL.Path)
 			span.SetTag("source_ip", from(req))
 
@@ -118,7 +119,6 @@ func DatadogTx() goa.Middleware {
 				} else {
 					span.Finish()
 				}
-				log.Info(ctx, "Datadog span stopped")
 			}()
 			err = h(ctx, rw, req)
 			return err
