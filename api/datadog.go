@@ -35,7 +35,7 @@ func (dd *datadogApp) Enabled() bool {
 }
 
 var ddApp *datadogApp
-var gitcommit string
+var gitcommit string = "0000000000000000000000000000000000000000"
 
 func InitDatadog(ctx context.Context, o DatadogOptions) {
 	dd := datadogApp{
