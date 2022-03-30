@@ -46,7 +46,7 @@ func InitDatadog(ctx context.Context, o DatadogOptions) {
 		log.Info(ctx, "Datadog disabled by config")
 		return
 	}
-	log.Info(ctx, "Datadog enabled")
+	log.Info(ctx, "Datadog enabled", "gitcommit", gitcommit)
 	tracer.Start(
 		// tracer.WithService(o.Name), name is set on the agent
 		tracer.WithServiceVersion(gitcommit),
