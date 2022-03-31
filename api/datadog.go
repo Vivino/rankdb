@@ -75,6 +75,7 @@ func DatadogTx() goa.Middleware {
 				tracer.ResourceName(goa.ContextController(ctx)+"."+goa.ContextAction(ctx)),
 			)
 
+			span.SetTag("http.method", r.Method)
 			span.SetTag("http.url", r.URL.Path)
 			span.SetTag("source_ip", from(req))
 
@@ -112,8 +113,8 @@ func DatadogTx() goa.Middleware {
 			var err error
 			defer func() {
 				resp := goa.ContextResponse(ctx)
-				span.SetTag("response_status_code", resp.Status)
-				span.SetTag("response_bytes", resp.Length)
+				span.SetTag("http.status_code", resp.Status)
+				span.SetTag("http.response.size", resp.Length)
 				if err != nil {
 					span.Finish(tracer.WithError(err))
 				} else {
