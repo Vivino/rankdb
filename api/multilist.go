@@ -408,13 +408,16 @@ func (c *MultilistController) Backup(ctx *app.BackupMultilistContext) error {
 
 // Create runs the create action.
 func (c *MultilistController) Restore(ctx *app.RestoreMultilistContext) error {
+	// TODO: disable max size check for now, set this to a reasonable value
+	c.MaxRequestBodyLength = 0
 	// MultilistElementsController_Backup: start_implement
-	if done, err := UpdateRequest(ctx); err != nil {
+	done, err := UpdateRequest(ctx)
+	if err != nil {
 		return err
-	} else {
-		defer done()
 	}
+	defer done()
 	defer ctx.Body.Close()
+
 	info := backup.RestoreInfo{
 		Source:  backup.WrapReader{ReadCloser: ctx.Body},
 		DB:      db,
