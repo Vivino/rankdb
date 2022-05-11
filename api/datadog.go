@@ -23,29 +23,17 @@ type DatadogOptions struct {
 	Enabled bool
 }
 
-type datadogApp struct {
-	enabled bool
-}
-
-func (dd *datadogApp) Enabled() bool {
-	if dd == nil || !dd.enabled {
-		return false
-	}
-	return true
-}
+type datadogApp struct{}
 
 var ddApp *datadogApp
 var gitcommit string = "0000000000000000000000000000000000000000"
 
 func InitDatadog(ctx context.Context, o DatadogOptions) {
-	dd := datadogApp{
-		enabled: o.Enabled,
-	}
-	ddApp = &dd
-	if !dd.Enabled() {
+	if !o.Enabled {
 		log.Info(ctx, "Datadog disabled by config")
 		return
 	}
+	ddApp = &datadogApp{}
 	log.Info(ctx, "Datadog enabled", "gitcommit", gitcommit)
 	tracer.Start(
 		// tracer.WithService(o.Name), name is set on the agent
@@ -63,10 +51,8 @@ func InitDatadog(ctx context.Context, o DatadogOptions) {
 // DatadogTx creates a request datadog middleware.
 func DatadogTx() goa.Middleware {
 	return func(h goa.Handler) goa.Handler {
-		if !ddApp.Enabled() {
-			return func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
-				return h(ctx, rw, req)
-			}
+		if ddApp == nil {
+			return h
 		}
 		return func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
 			r := goa.ContextRequest(ctx)

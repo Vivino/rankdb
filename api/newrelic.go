@@ -35,6 +35,11 @@ type NewRelicOptions struct {
 
 type newRelic struct {
 	app newrelic.Application
+	enabled bool
+}
+
+func (nr *newRelic) Enabled() bool {
+	return nr != nil && nr.enabled
 }
 
 var nrApp *newRelic
@@ -87,10 +92,10 @@ func InitNewRelic(ctx context.Context, o NewRelicOptions) {
 // If verbose is true then the middlware logs the request and response bodies.
 func NewRelicTx() goa.Middleware {
 	return func(h goa.Handler) goa.Handler {
+		if nrApp == nil {
+			return h
+		}
 		return func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
-			if nrApp == nil {
-				return h(ctx, rw, req)
-			}
 			app := nrApp.app
 			txn := app.StartTransaction(goa.ContextController(ctx)+"."+goa.ContextAction(ctx), rw, req)
 			r := goa.ContextRequest(ctx)
