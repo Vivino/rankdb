@@ -19,7 +19,6 @@ import (
 )
 
 type DatadogOptions struct {
-	Name    string
 	Enabled bool
 }
 
@@ -40,7 +39,6 @@ func InitDatadog(ctx context.Context, o DatadogOptions) {
 	ddApp = &datadogApp{}
 	log.Info(ctx, "Datadog enabled", "gitcommit", gitcommit)
 	tracer.Start(
-		// tracer.WithService(o.Name), name is set on the agent
 		tracer.WithServiceVersion(gitcommit),
 	)
 	log.Info(ctx, "Datadog tracer started")
