@@ -47,10 +47,10 @@ func StartServices(logger goa.LogAdapter, ctx context.Context, err error) {
 	service.Use(SetLogger())
 	service.Use(middleware.RequestID())
 	service.Use(middleware.LogRequest(false))
-	if nrApp != nil {
+	if nrApp.Enabled() {
 		service.Use(NewRelicTx())
 	}
-	if ddApp != nil {
+	if ddApp.Enabled() {
 		service.Use(DatadogTx())
 	}
 	service.Use(middleware.ErrorHandler(service, true))

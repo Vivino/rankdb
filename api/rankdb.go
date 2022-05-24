@@ -140,7 +140,7 @@ func StartServer(ctx context.Context, confData io.Reader, lr *logrus.Logger) err
 	}
 	InitNewRelic(ctx, config.NewRelic)
 	InitDatadog(ctx, config.Datadog)
-	if nrApp != nil {
+	if nrApp.Enabled() {
 		// Intercept error messages.
 		ctx = log.WithLogger(ctx, log.Intercept(log.Logger(ctx), nil, func(msg string, keyvals ...interface{}) {
 			params := make(map[string]interface{}, len(keyvals)/2)

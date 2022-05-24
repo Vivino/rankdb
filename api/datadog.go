@@ -25,6 +25,10 @@ type DatadogOptions struct {
 
 type datadogApp struct{}
 
+func (d *datadogApp) Enabled() bool {
+	return d != nil
+}
+
 var ddApp *datadogApp
 var gitcommit string = "0000000000000000000000000000000000000000"
 
@@ -51,9 +55,6 @@ func InitDatadog(ctx context.Context, o DatadogOptions) {
 // DatadogTx creates a request datadog middleware.
 func DatadogTx() goa.Middleware {
 	return func(h goa.Handler) goa.Handler {
-		if ddApp == nil {
-			return h
-		}
 		return func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
 			r := goa.ContextRequest(ctx)
 			span := tracer.StartSpan("web.request",
