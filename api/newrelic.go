@@ -30,15 +30,24 @@ type NewRelicOptions struct {
 	TxTracerThreshold duration
 	ExcludeAttributes []string
 	HostDisplayName   string
+	Enabled           bool
 }
 
 type newRelic struct {
 	app newrelic.Application
 }
 
+func (nr *newRelic) Enabled() bool {
+	return nr != nil
+}
+
 var nrApp *newRelic
 
 func InitNewRelic(ctx context.Context, o NewRelicOptions) {
+	if !o.Enabled {
+		log.Info(ctx, "New Relic agent disabled by config")
+		return
+	}
 	nrCfg := newrelic.NewConfig(o.AppName, o.License)
 	if len(o.ExcludeAttributes) > 0 {
 		nrCfg.Attributes.Exclude = append(nrCfg.Attributes.Exclude, o.ExcludeAttributes...)
@@ -83,9 +92,6 @@ func InitNewRelic(ctx context.Context, o NewRelicOptions) {
 func NewRelicTx() goa.Middleware {
 	return func(h goa.Handler) goa.Handler {
 		return func(ctx context.Context, rw http.ResponseWriter, req *http.Request) error {
-			if nrApp == nil {
-				return h(ctx, rw, req)
-			}
 			app := nrApp.app
 			txn := app.StartTransaction(goa.ContextController(ctx)+"."+goa.ContextAction(ctx), rw, req)
 			r := goa.ContextRequest(ctx)
