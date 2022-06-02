@@ -1022,7 +1022,9 @@ func (l *List) Stats(ctx context.Context, bs blobstore.Store, elements bool) (*L
 	index := segs.index
 
 	res.Elements = scores.Elements()
+	//nolint - why's it okay to use scores before checking if it's nil again?
 	res.Segments = len(scores.Segments)
+	//nolint - why's it okay to use scores before checking if it's nil again?
 	if scores != nil {
 		res.CacheHits = l.scores.cacheHits + l.index.cacheHits
 		res.CacheMisses = l.scores.cacheMisses + l.index.cacheMisses

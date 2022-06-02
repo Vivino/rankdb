@@ -1,3 +1,4 @@
+//nolint
 package rankdb_test
 
 // Copyright 2019 Vivino. All rights reserved

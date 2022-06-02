@@ -14,7 +14,6 @@ import (
 	"time"
 
 	"github.com/Vivino/rankdb"
-	"github.com/stretchr/testify/assert"
 )
 
 type counter uint64
@@ -34,34 +33,20 @@ func TestElements_Add(t *testing.T) {
 	lst := rankdb.Elements{}
 	cnt := counter(1000)
 	now := time.Now()
-	_, err := lst.Add(rankdb.Element{ID: cnt.next(), Score: 1000})
-	assert.NoError(t, err)
-	_, err = lst.Add(rankdb.Element{ID: cnt.next(), Score: 100})
-	assert.NoError(t, err)
-	_, err = lst.Add(rankdb.Element{ID: cnt.next(), Score: 100000})
-	assert.NoError(t, err)
-	_, err = lst.Add(rankdb.Element{ID: cnt.next(), Score: 500, TieBreaker: 10})
-	assert.NoError(t, err)
-	_, err = lst.Add(rankdb.Element{ID: cnt.next(), Score: 500, TieBreaker: 100})
-	assert.NoError(t, err)
-	_, err = lst.Add(rankdb.Element{ID: cnt.next(), Score: 500, TieBreaker: 1})
-	assert.NoError(t, err)
-	_, err = lst.Add(rankdb.Element{ID: cnt.next(), Score: 500, TieBreaker: 1})
-	assert.NoError(t, err)
-	_, err = lst.Add(rankdb.Element{ID: cnt.next(), Score: 500, TieBreaker: 1, Updated: timeUnix(now)})
-	assert.NoError(t, err)
-	_, err = lst.Add(rankdb.Element{ID: cnt.next(), Score: 500, TieBreaker: 1, Updated: timeUnix(now.Add(-time.Hour))})
-	assert.NoError(t, err)
-	_, err = lst.Add(rankdb.Element{ID: cnt.next(), Score: 500, TieBreaker: 1, Updated: timeUnix(now.Add(time.Hour))})
-	assert.NoError(t, err)
-	_, err = lst.Add(rankdb.Element{ID: cnt.next(), Score: 500, TieBreaker: 1, Updated: timeUnix(now)})
-	assert.NoError(t, err)
-	_, err = lst.Add(rankdb.Element{ID: cnt.next() - 100, Score: 500, TieBreaker: 1, Updated: timeUnix(now)})
-	assert.NoError(t, err)
-	_, err = lst.Add(rankdb.Element{ID: cnt.next() - 100, Score: 500, TieBreaker: 1, Updated: timeUnix(now)})
-	assert.NoError(t, err)
-	_, err = lst.Add(rankdb.Element{ID: cnt.next() - 200, Score: 500, TieBreaker: 1, Updated: timeUnix(now)})
-	assert.NoError(t, err)
+	lst.Add(rankdb.Element{ID: cnt.next(), Score: 1000})
+	lst.Add(rankdb.Element{ID: cnt.next(), Score: 100})
+	lst.Add(rankdb.Element{ID: cnt.next(), Score: 100000})
+	lst.Add(rankdb.Element{ID: cnt.next(), Score: 500, TieBreaker: 10})
+	lst.Add(rankdb.Element{ID: cnt.next(), Score: 500, TieBreaker: 100})
+	lst.Add(rankdb.Element{ID: cnt.next(), Score: 500, TieBreaker: 1})
+	lst.Add(rankdb.Element{ID: cnt.next(), Score: 500, TieBreaker: 1})
+	lst.Add(rankdb.Element{ID: cnt.next(), Score: 500, TieBreaker: 1, Updated: timeUnix(now)})
+	lst.Add(rankdb.Element{ID: cnt.next(), Score: 500, TieBreaker: 1, Updated: timeUnix(now.Add(-time.Hour))})
+	lst.Add(rankdb.Element{ID: cnt.next(), Score: 500, TieBreaker: 1, Updated: timeUnix(now.Add(time.Hour))})
+	lst.Add(rankdb.Element{ID: cnt.next(), Score: 500, TieBreaker: 1, Updated: timeUnix(now)})
+	lst.Add(rankdb.Element{ID: cnt.next() - 100, Score: 500, TieBreaker: 1, Updated: timeUnix(now)})
+	lst.Add(rankdb.Element{ID: cnt.next() - 100, Score: 500, TieBreaker: 1, Updated: timeUnix(now)})
+	lst.Add(rankdb.Element{ID: cnt.next() - 200, Score: 500, TieBreaker: 1, Updated: timeUnix(now)})
 	if len(lst) < 5 {
 		t.Fatal("Want elements in list, found ", len(lst))
 	}
@@ -85,7 +70,7 @@ func TestElements_Delete(t *testing.T) {
 
 func testElements_DeleteAt(t *testing.T, n int, orig rankdb.Elements) {
 	testOn := orig.Clone(true)
-	assert.NoError(t, testOn.Delete(orig[n].ID))
+	testOn.Delete(orig[n].ID)
 	if len(orig)-1 != len(testOn) {
 		t.Fatal("did not remove element")
 	}
@@ -303,20 +288,13 @@ func TestIndexElements_SegmentSorter(t *testing.T) {
 	lst := rankdb.Elements{}
 	cnt := counter(1000)
 	now := timeUnix(time.Now())
-	_, err := lst.Add(rankdb.Element{ID: cnt.next(), Score: 1000})
-	assert.NoError(t, err)
-	_, err = lst.Add(rankdb.Element{ID: cnt.next(), Score: 100})
-	assert.NoError(t, err)
-	_, err = lst.Add(rankdb.Element{ID: cnt.next(), Score: 100000})
-	assert.NoError(t, err)
-	_, err = lst.Add(rankdb.Element{ID: cnt.next(), Score: 500, TieBreaker: 10})
-	assert.NoError(t, err)
-	_, err = lst.Add(rankdb.Element{ID: cnt.next(), Score: 500, TieBreaker: 100})
-	assert.NoError(t, err)
-	_, err = lst.Add(rankdb.Element{ID: cnt.next(), Score: 500, TieBreaker: 1})
-	assert.NoError(t, err)
-	_, err = lst.Add(rankdb.Element{ID: cnt.next() - 200, Score: 500, TieBreaker: 2, Updated: now})
-	assert.NoError(t, err)
+	lst.Add(rankdb.Element{ID: cnt.next(), Score: 1000})
+	lst.Add(rankdb.Element{ID: cnt.next(), Score: 100})
+	lst.Add(rankdb.Element{ID: cnt.next(), Score: 100000})
+	lst.Add(rankdb.Element{ID: cnt.next(), Score: 500, TieBreaker: 10})
+	lst.Add(rankdb.Element{ID: cnt.next(), Score: 500, TieBreaker: 100})
+	lst.Add(rankdb.Element{ID: cnt.next(), Score: 500, TieBreaker: 1})
+	lst.Add(rankdb.Element{ID: cnt.next() - 200, Score: 500, TieBreaker: 2, Updated: now})
 	idx := rankdb.IndexElements{Elements: lst}
 	sort.Slice(idx.Elements, idx.SegmentSorter())
 	wantE := []struct {
@@ -523,6 +501,27 @@ func randElements(n int, seed ...int64) rankdb.Elements {
 			Updated:    timeUnix(time.Now().Add(-time.Millisecond * time.Duration(rng.Int63n(int64(time.Hour)*24*365)))),
 			ID:         rankdb.ElementID(rng.Uint64()),
 			Payload:    []byte(`{"value":"` + rankdb.RandString(5) + `", "type": "user-list"}`),
+		}
+	}
+	return res
+}
+
+func randSortedElements(n int, seed ...int64) rankdb.Elements {
+	if n == 0 {
+		return rankdb.Elements{}
+	}
+	rng := rand.New(rand.NewSource(0x1337beefc0cac01a))
+	if len(seed) > 0 {
+		rng = rand.New(rand.NewSource(seed[0]))
+	}
+	res := make(rankdb.Elements, n)
+	for i := range res {
+		res[i] = rankdb.Element{
+			Score:      uint64(n - i),
+			TieBreaker: rng.Uint32(),
+			Updated:    timeUnix(time.Now().Add(-time.Millisecond * time.Duration(rng.Int63n(int64(time.Hour)*24*365)))),
+			ID:         rankdb.ElementID(rng.Uint64()),
+			Payload:    nil,
 		}
 	}
 	return res
