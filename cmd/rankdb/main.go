@@ -74,7 +74,7 @@ func main() {
 			}
 		}()
 	}
-	api.StartServices(logger, ctx, err)
+	api.StartServices(logger, ctx)
 }
 
 // exitOnFailure prints a fatal error message and exits the process with status 1.

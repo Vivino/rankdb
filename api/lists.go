@@ -130,10 +130,8 @@ func (c *ListsController) GetPercentile(ctx *app.GetPercentileListsContext) erro
 	if !ok {
 		return ctx.NotFound(goa.ErrNotFound("not_found", "list_id", ctx.ListID))
 	}
-	var percentile float64
-	if fromTop, err2 := strconv.ParseFloat(ctx.FromTop, 64); err2 == nil {
-		percentile = fromTop
-	} else {
+	percentile, err := strconv.ParseFloat(ctx.FromTop, 64)
+	if err != nil {
 		return ctx.BadRequest(goa.InvalidParamTypeError("from_top", ctx.FromTop, "number"))
 	}
 	if percentile < 0 {

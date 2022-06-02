@@ -29,10 +29,7 @@ var (
 	listenAddr net.Addr
 )
 
-func StartServices(logger goa.LogAdapter, ctx context.Context, err error) {
-	if err != nil {
-		return
-	}
+func StartServices(logger goa.LogAdapter, ctx context.Context) {
 	shutdown.PreShutdownFn(func() {
 		close(shutdownStarted)
 	})

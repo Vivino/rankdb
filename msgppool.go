@@ -35,9 +35,7 @@ var writerMsgpPool = sync.Pool{
 	},
 }
 
-//nolint - versionExt is unused, but someone apparently thought it should be here anyway?
 const (
-	versionExt   = 0   // Reserved for future extensions.
 	versionError = 255 // Error
 )
 

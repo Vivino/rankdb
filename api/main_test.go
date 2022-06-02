@@ -63,7 +63,7 @@ func TestMain(m *testing.M) {
 	err = conf.Close()
 	exitOnFailure(err)
 	enableJWTCreation = true
-	go StartServices(logger, ctx, err)
+	go StartServices(logger, ctx)
 	<-listening
 
 	// Initialize clients
