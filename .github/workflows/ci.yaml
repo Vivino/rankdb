@@ -23,8 +23,6 @@ jobs:
         with:
           go-version: ${{ matrix.go-version }}
       - name: golangci-lint
-        # TODO: fix golangci-lint errors and warnings, and remove continue-on-error
-        continue-on-error: true
         uses: golangci/golangci-lint-action@v2
         with:
           version: v1.43
