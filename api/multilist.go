@@ -472,7 +472,7 @@ func onEveryList(ctx context.Context, lists rankdb.ListIDs, limit int, fn func(l
 	var mu sync.Mutex
 	var results = app.RankdbResultlist{
 		Success: make(map[string]*app.RankdbOperationSuccess, len(lists)),
-		Errors:  make(map[string]string, 0),
+		Errors:  make(map[string]string),
 	}
 	var tokens = make(chan struct{}, limit)
 	for i := 0; i < limit; i++ {

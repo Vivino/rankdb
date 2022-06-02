@@ -286,7 +286,7 @@ func TestMultilistController_Backup(t *testing.T) {
 	}
 	createList(t, t.Name(), elems)
 	createList(t, t.Name()+"-2", elems)
-	dir, err := ioutil.TempDir("", t.Name())
+	dir, _ := ioutil.TempDir("", t.Name())
 	fileName := filepath.Join(dir, t.Name()+".bin")
 	payload := client.MultiListBackup{
 		Destination: &client.BackupDestination{

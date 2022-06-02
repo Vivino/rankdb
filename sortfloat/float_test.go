@@ -25,7 +25,7 @@ func TestSortableFloat64(t *testing.T) {
 		tosort = append(tosort, forward)
 	}
 	sort.SliceStable(tosort, func(i, j int) bool { return tosort[i] < tosort[j] })
-	sort.Sort(sort.Float64Slice(values))
+	sort.Float64s(values)
 
 	for i, v := range values {
 		got := ReverseFloat64(tosort[i])

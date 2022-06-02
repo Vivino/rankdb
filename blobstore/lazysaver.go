@@ -179,7 +179,7 @@ func NewLazySaver(store Store, opts ...lazySaveOption) (*LazySaver, error) {
 		cacheIdx:        make(map[string]*list.Element),
 		itemAdded:       make(chan struct{}, 1),
 		savech:          make(chan *list.Element),
-		shutdownCh:      make(chan struct{}, 0),
+		shutdownCh:      make(chan struct{}),
 	}
 	for _, opt := range opts {
 		err := opt(&l.lazySaveOptions)
@@ -681,5 +681,6 @@ func putDataBufferChunk(p []byte) {
 	if size >= 1<<20 {
 		i = 10
 	}
+	//nolint - don't tell me what to make pointerlike
 	dataChunkPools[i].Put(p[:0])
 }

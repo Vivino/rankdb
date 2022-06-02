@@ -30,6 +30,9 @@ var (
 )
 
 func StartServices(logger goa.LogAdapter, ctx context.Context, err error) {
+	if err != nil {
+		return
+	}
 	shutdown.PreShutdownFn(func() {
 		close(shutdownStarted)
 	})

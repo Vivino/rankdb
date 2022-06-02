@@ -54,7 +54,7 @@ func main() {
 	var dumpOnce sync.Once
 	shutdown.OnTimeout(func(stage shutdown.Stage, s string) {
 		dumpOnce.Do(func() {
-			pprof.Lookup("goroutine").WriteTo(lr.Out, 1)
+			_ = pprof.Lookup("goroutine").WriteTo(lr.Out, 1)
 		})
 	})
 
