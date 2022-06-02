@@ -48,5 +48,4 @@ func (ids ListIDs) Sort() {
 	sort.Slice(ids, func(i, j int) bool {
 		return ids[i] < ids[j]
 	})
-	return
 }

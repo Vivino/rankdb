@@ -240,6 +240,9 @@ func TestNewListClone(t *testing.T) {
 		rankdb.WithListOption.Clone(l0),
 		rankdb.WithListOption.Cache(nil),
 	)
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	// Delete all of original
 	err = l0.DeleteAll(ctx, store)

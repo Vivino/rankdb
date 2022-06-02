@@ -314,7 +314,6 @@ func (l *Elements) MergeDeduplicate(ins Elements) {
 	// Re-sort.
 	sort.Slice(ins, ins.Sorter())
 	*l = ins
-	return
 }
 
 // MinMax returns the minimum and maximum values of the elements.
@@ -449,22 +448,6 @@ func (e Elements) FirstElementsWithScore(scores []uint64) Elements {
 		}
 	}
 	return res
-}
-
-// minMaxUnsorted provides the smallest and biggest score
-// on unsorted elements.
-func (l Elements) minMaxUnsorted() (min, max uint64) {
-	min = math.MaxUint64
-	max = 0
-	for _, v := range l {
-		if v.Score > max {
-			max = v.Score
-		}
-		if v.Score < min {
-			min = v.Score
-		}
-	}
-	return min, max
 }
 
 // ElementIDs returns element ids as ranked elements,

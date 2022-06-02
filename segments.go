@@ -444,7 +444,11 @@ func (s *Segments) DeleteElements(ctx context.Context, bs blobstore.WithSet, e E
 				log.Info(ctx, "Did not find all elements", "left", len(toDelete)-ndeleted)
 			}
 			ls.elements = ls.elements[:wrtto]
-			s.replaceSegment(ctx, bs, ls)
+			err = s.replaceSegment(ctx, bs, ls)
+			if err != nil {
+				errC <- err
+				return
+			}
 			if withIdx {
 				deleted.Sort()
 				idxC <- deleted
@@ -901,17 +905,6 @@ func (s *Segments) Delete(ctx context.Context, store blobstore.WithSet) error {
 	return store.Delete(ctx, string(s.ID))
 }
 
-// topRankOf returns the rank of the top element in segment.
-func (s *Segments) topRankOf(segIdx int) (n int) {
-	for i := range s.Segments {
-		if i == segIdx {
-			return n
-		}
-		n += s.Segments[i].N
-	}
-	panic("segment index out of bounds")
-}
-
 // FindElements returns elements with the supplied indices.
 // Not found errors are logged, but not fatal.
 // Caller must hold s.scores read lock.
@@ -925,7 +918,7 @@ func (s *Segments) FindElements(ctx context.Context, bs blobstore.WithSet, ids I
 
 	// For each segment look up the collected elements.
 	var wg sync.WaitGroup
-	var errch = make(chan error, 0)
+	var errch = make(chan error)
 	var resch = make(chan []RankedElement, len(split))
 	wg.Add(len(split))
 	offsets, total := s.topOffsets()
@@ -1133,7 +1126,7 @@ func (s *Segments) updateIndexElements(ctx context.Context, bs blobstore.WithSet
 	split := s.splitIndexUpdates(ctx, e)
 	// For each segment look up the collected elements.
 	var wg sync.WaitGroup
-	var errch = make(chan error, 0)
+	var errch = make(chan error)
 	now := uint32(time.Now().Unix())
 	wg.Add(len(split))
 	for segIdx, elems := range split {
@@ -1191,7 +1184,7 @@ func (s *Segments) getFirstWithScore(ctx context.Context, bs blobstore.WithSet, 
 	// The find the elements in each segment.
 	split := s.splitScores(ctx, scores)
 	var wg sync.WaitGroup
-	var errch = make(chan error, 0)
+	var errch = make(chan error)
 	var resch = make(chan Elements, len(split))
 	wg.Add(len(split))
 	var b = NewBucket(8)
