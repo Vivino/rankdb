@@ -48,7 +48,7 @@ func (f *File) Save(ctx context.Context) (io.WriteCloser, error) {
 	go func() {
 		res, err := uploader.UploadWithContext(ctx, &input)
 		if err != nil {
-			reader.CloseWithError(err)
+			_ = reader.CloseWithError(err)
 			log.Error(ctx, "Unable to upload data", "error", err.Error())
 		}
 		f.Result <- res

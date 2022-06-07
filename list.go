@@ -783,8 +783,8 @@ func (l *List) reindex(ctx context.Context, bs blobstore.Store, segs *segments) 
 // VerifyUnlocked validates that all elements of the list can be locked.
 // This is only really usable for tests, where list context is controlled.
 func (l *List) VerifyUnlocked(ctx context.Context, timeout time.Duration) error {
-	var fail = make(chan struct{}, 0)
-	var ok = make(chan struct{}, 0)
+	var fail = make(chan struct{})
+	var ok = make(chan struct{})
 	var wg = &sync.WaitGroup{}
 
 	go func() {
@@ -806,7 +806,7 @@ func (l *List) VerifyUnlocked(ctx context.Context, timeout time.Duration) error 
 		return errors.New("timeout acquiring locks")
 	case <-ok:
 	}
-	ok = make(chan struct{}, 0)
+	ok = make(chan struct{})
 
 	// We need read lock.
 	l.RLock()
@@ -837,7 +837,7 @@ func (l *List) VerifyUnlocked(ctx context.Context, timeout time.Duration) error 
 
 	select {
 	case <-fail:
-		pprof.Lookup("goroutine").WriteTo(os.Stderr, 1)
+		_ = pprof.Lookup("goroutine").WriteTo(os.Stderr, 1)
 		time.Sleep(time.Millisecond * 100)
 		return errors.New("timeout acquiring locks")
 	case <-ok:
@@ -848,7 +848,7 @@ func (l *List) VerifyUnlocked(ctx context.Context, timeout time.Duration) error 
 
 func testLock(log log.Adapter, fail chan struct{}, locker sync.Locker, wg *sync.WaitGroup) {
 	wg.Add(1)
-	var ok = make(chan struct{}, 0)
+	var ok = make(chan struct{})
 	go func() {
 		locker.Lock()
 		close(ok)
@@ -1022,7 +1022,9 @@ func (l *List) Stats(ctx context.Context, bs blobstore.Store, elements bool) (*L
 	index := segs.index
 
 	res.Elements = scores.Elements()
+	//nolint - why's it okay to use scores before checking if it's nil again?
 	res.Segments = len(scores.Segments)
+	//nolint - why's it okay to use scores before checking if it's nil again?
 	if scores != nil {
 		res.CacheHits = l.scores.cacheHits + l.index.cacheHits
 		res.CacheMisses = l.scores.cacheMisses + l.index.cacheMisses
@@ -1057,7 +1059,7 @@ func (l *List) Stats(ctx context.Context, bs blobstore.Store, elements bool) (*L
 func (l *List) ReleaseSegments(ctx context.Context) {
 	ctx = log.WithFn(ctx)
 	var gotLoading, gotSegments, cancelled bool
-	var done = make(chan struct{}, 0)
+	var done = make(chan struct{})
 	var mu sync.Mutex
 	l.RLock()
 	listID := l.ID

@@ -95,16 +95,16 @@ func NewRelicTx() goa.Middleware {
 			app := nrApp.app
 			txn := app.StartTransaction(goa.ContextController(ctx)+"."+goa.ContextAction(ctx), rw, req)
 			r := goa.ContextRequest(ctx)
-			txn.AddAttribute("source_ip", from(req))
+			_ = txn.AddAttribute("source_ip", from(req))
 
 			if config.Debug && len(r.Header) > 0 {
 				for k, v := range r.Header {
-					txn.AddAttribute("header_"+k, `"`+strings.Join(v, `","`)+`"`)
+					_ = txn.AddAttribute("header_"+k, `"`+strings.Join(v, `","`)+`"`)
 				}
 			}
 			if len(r.Params) > 0 {
 				for k, v := range r.Params {
-					txn.AddAttribute("param_"+k, `"`+strings.Join(v, `","`)+`"`)
+					_ = txn.AddAttribute("param_"+k, `"`+strings.Join(v, `","`)+`"`)
 				}
 			}
 			if config.Debug && r.ContentLength > 0 && r.ContentLength < 1024 {
@@ -113,10 +113,10 @@ func NewRelicTx() goa.Middleware {
 				if err != nil {
 					js = []byte("<invalid JSON>")
 				}
-				txn.AddAttribute("payload_json", string(js))
+				_ = txn.AddAttribute("payload_json", string(js))
 			}
 			ierr := func(msg string, keyvals ...interface{}) {
-				txn.NoticeError(errors.New(msg))
+				_ = txn.NoticeError(errors.New(msg))
 				for len(keyvals) > 0 {
 					key := fmt.Sprint(keyvals[0])
 					keyvals = keyvals[1:]
@@ -125,7 +125,7 @@ func NewRelicTx() goa.Middleware {
 						val = fmt.Sprint(keyvals[0])
 						keyvals = keyvals[1:]
 					}
-					txn.AddAttribute(key, val)
+					_ = txn.AddAttribute(key, val)
 				}
 			}
 			var ninfo int
@@ -136,7 +136,7 @@ func NewRelicTx() goa.Middleware {
 				ninfo++
 				mu.Unlock()
 				if n < 10 {
-					txn.AddAttribute(fmt.Sprintf("info_msg_%d", n), formatMsg(msg, keyvals, false))
+					_ = txn.AddAttribute(fmt.Sprintf("info_msg_%d", n), formatMsg(msg, keyvals, false))
 				}
 			}
 			intLogger := log.Intercept(log.Logger(ctx), iinfo, ierr)
@@ -146,18 +146,18 @@ func NewRelicTx() goa.Middleware {
 			defer func() {
 				resp := goa.ContextResponse(ctx)
 				if code := resp.ErrorCode; code != "" {
-					txn.AddAttribute("error_code", code)
-					txn.NoticeError(err)
+					_ = txn.AddAttribute("error_code", code)
+					_ = txn.NoticeError(err)
 				} else if resp.Status >= 500 || err != nil {
 					err2 := err
 					if err == nil {
 						err2 = errors.New(resp.ErrorCode)
 					}
-					txn.NoticeError(err2)
+					_ = txn.NoticeError(err2)
 				}
-				txn.AddAttribute("response_status_code", resp.Status)
-				txn.AddAttribute("response_bytes", resp.Length)
-				txn.End()
+				_ = txn.AddAttribute("response_status_code", resp.Status)
+				_ = txn.AddAttribute("response_bytes", resp.Length)
+				_ = txn.End()
 			}()
 			return err
 		}

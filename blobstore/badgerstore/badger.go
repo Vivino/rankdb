@@ -88,7 +88,7 @@ func (b *BadgerStore) flush() error {
 	txn := b.db.NewTransaction(true)
 	for k, v := range b.queue {
 		if err := txn.Set([]byte(k), v); err == badger.ErrTxnTooBig {
-			err = txn.Commit()
+			_ = txn.Commit()
 			txn = b.db.NewTransaction(true)
 			err = txn.Set([]byte(k), v)
 			if err != nil {

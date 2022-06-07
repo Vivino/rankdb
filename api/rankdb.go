@@ -232,7 +232,6 @@ func StartServer(ctx context.Context, confData io.Reader, lr *logrus.Logger) err
 		updateBucket = rankdb.NewBucket(config.MaxUpdates)
 	}
 	if config.CacheEntries > 0 {
-		err = nil
 		switch config.CacheType {
 		case "", "ARC":
 			cache, err = lru.NewARC(config.CacheEntries)

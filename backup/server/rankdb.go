@@ -88,7 +88,7 @@ func (b *bodyWriter) Transfer(ctx context.Context) {
 	}
 	log.Info(ctx, "Destination server returned ok", "full_path", b.req.URL.String())
 	b.r.Close()
-	io.Copy(ioutil.Discard, resp.Body)
+	_, _ = io.Copy(ioutil.Discard, resp.Body)
 	resp.Body.Close()
 }
 

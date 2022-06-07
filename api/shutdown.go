@@ -18,7 +18,7 @@ import (
 var (
 	errShutdown     = goa.NewErrorClass("server_restarting", http.StatusServiceUnavailable)("Server restarting")
 	errCancelled    = goa.NewErrorClass("request_cancelled", 499)("Request Cancelled")
-	shutdownStarted = make(chan struct{}, 0)
+	shutdownStarted = make(chan struct{})
 )
 
 // ShutdownMiddleware rejects request once shutdown starts.
@@ -32,7 +32,6 @@ func ShutdownMiddleware(h goa.Handler) goa.Handler {
 		err := h(ctx, rw, req)
 		if err == context.Canceled || ctx.Err() == context.Canceled {
 			log.Info(ctx, "Context was cancelled")
-			err = nil
 			if shutdown.Started() {
 				return errShutdown
 			}

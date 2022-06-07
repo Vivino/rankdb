@@ -63,24 +63,21 @@ func (c *HealthController) Health(ctx *app.HealthHealthContext) error {
 func (c *HealthController) memoryReader() {
 	ctx := c.Context
 	ticker := time.Tick(time.Minute)
-	for {
-		select {
-		case <-ticker:
-			var mem runtime.MemStats
-			runtime.ReadMemStats(&mem)
-			j, err := json.MarshalIndent(mem, "", "\t")
-			if err != nil {
-				log.Error(ctx, "unable to marshal memstats", "error", err.Error())
-			}
-			var m map[string]interface{}
-			err = json.Unmarshal(j, &m)
-			if err != nil {
-				log.Error(ctx, "unable to unmarshal memstats", "error", err.Error())
-			}
-			c.memoryMuStats.Lock()
-			c.memoryStats = m
-			c.memoryMuStats.Unlock()
+	for range ticker {
+		var mem runtime.MemStats
+		runtime.ReadMemStats(&mem)
+		j, err := json.MarshalIndent(mem, "", "\t")
+		if err != nil {
+			log.Error(ctx, "unable to marshal memstats", "error", err.Error())
 		}
+		var m map[string]interface{}
+		err = json.Unmarshal(j, &m)
+		if err != nil {
+			log.Error(ctx, "unable to unmarshal memstats", "error", err.Error())
+		}
+		c.memoryMuStats.Lock()
+		c.memoryStats = m
+		c.memoryMuStats.Unlock()
 	}
 }
 

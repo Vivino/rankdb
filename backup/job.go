@@ -53,7 +53,6 @@ func (id ID) Cancel() {
 		return
 	}
 	job.cancel()
-	return
 }
 
 func (id ID) String() string {

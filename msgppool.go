@@ -36,7 +36,6 @@ var writerMsgpPool = sync.Pool{
 }
 
 const (
-	versionExt   = 0   // Reserved for future extensions.
 	versionError = 255 // Error
 )
 
