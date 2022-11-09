@@ -30,7 +30,7 @@ require (
 	github.com/zach-klippenstein/goregen v0.0.0-20160303162051-795b5e3961ea // indirect
 	go.etcd.io/bbolt v1.3.5
 	golang.org/x/lint v0.0.0-20210508222113-6edffad5e616
-	golang.org/x/tools v0.2.0
+	golang.org/x/tools v0.1.10
 	gopkg.in/DataDog/dd-trace-go.v1 v1.37.0
 )
 
