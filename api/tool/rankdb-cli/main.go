@@ -37,7 +37,7 @@ func main() {
 
 	// Execute!
 	if err := app.Execute(); err != nil {
-		fmt.Fprintf(os.Stderr, err.Error())
+		fmt.Fprint(os.Stderr, err.Error())
 		os.Exit(-1)
 	}
 }

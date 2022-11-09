@@ -17,7 +17,6 @@ import (
 
 var (
 	awsSession *session.Session
-	awsCreds   *credentials.Credentials
 )
 
 func initAws(ctx context.Context) {
@@ -46,7 +45,6 @@ func initAws(ctx context.Context) {
 		log.Error(ctx, "AWS not initialized", "error", err.Error())
 		return
 	}
-	awsCreds = creds
 	cfg := aws.NewConfig().WithRegion(config.AWS.Region).WithCredentials(creds)
 	if config.AWS.S3Endpoint != "" {
 		cfg = cfg.WithEndpoint(config.AWS.S3Endpoint)

@@ -37,7 +37,7 @@ run: build
 
 build: install
 	mkdir -p bin/
-	${BUILD_ARCH} go build -o bin/go-ranks  ${PROJECT}/cmd/rankdb
+	${BUILD_ARCH} go build -ldflags "-X ${PROJECT}/api.gitcommit=${COMMIT}" -o bin/go-ranks  ${PROJECT}/cmd/rankdb
 	${BUILD_ARCH} go build -o bin/go-ranks-cli  ${PROJECT}/api/tool/rankdb-cli
 
 dist: build

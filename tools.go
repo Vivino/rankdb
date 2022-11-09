@@ -81,14 +81,9 @@ finish:
 		select {
 		case <-ctx.Done():
 			// Flush errors and return.
-			for {
-				select {
-				case _, ok := <-errch:
-					if !ok {
-						return ctx.Err()
-					}
-				}
+			for range errch {
 			}
+			return ctx.Err()
 		case err, ok := <-errch:
 			if !ok {
 				break finish

@@ -409,12 +409,13 @@ func (c *MultilistController) Backup(ctx *app.BackupMultilistContext) error {
 // Create runs the create action.
 func (c *MultilistController) Restore(ctx *app.RestoreMultilistContext) error {
 	// MultilistElementsController_Backup: start_implement
-	if done, err := UpdateRequest(ctx); err != nil {
+	done, err := UpdateRequest(ctx)
+	if err != nil {
 		return err
-	} else {
-		defer done()
 	}
+	defer done()
 	defer ctx.Body.Close()
+
 	info := backup.RestoreInfo{
 		Source:  backup.WrapReader{ReadCloser: ctx.Body},
 		DB:      db,
@@ -471,7 +472,7 @@ func onEveryList(ctx context.Context, lists rankdb.ListIDs, limit int, fn func(l
 	var mu sync.Mutex
 	var results = app.RankdbResultlist{
 		Success: make(map[string]*app.RankdbOperationSuccess, len(lists)),
-		Errors:  make(map[string]string, 0),
+		Errors:  make(map[string]string),
 	}
 	var tokens = make(chan struct{}, limit)
 	for i := 0; i < limit; i++ {

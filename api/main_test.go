@@ -39,9 +39,6 @@ const (
 	// ContentTypeMsgpack specifies a messagepack encoding.
 	// Compact and fast.
 	contentMsgpack = "application/msgpack"
-
-	// ContentTypeJSON forces JSON as transport protocol.
-	contentJSON = "application/json"
 )
 
 var (
@@ -52,6 +49,7 @@ var (
 	tClientManage *client.Client
 )
 
+//nolint:staticcheck
 func TestMain(m *testing.M) {
 	lr := logrus.New()
 	lr.Formatter = &logrus.TextFormatter{DisableColors: true}
@@ -65,7 +63,7 @@ func TestMain(m *testing.M) {
 	err = conf.Close()
 	exitOnFailure(err)
 	enableJWTCreation = true
-	go StartServices(logger, ctx, err)
+	go StartServices(logger, ctx)
 	<-listening
 
 	// Initialize clients
@@ -107,7 +105,7 @@ func initClient(ctx context.Context, dstClient **client.Client, scope string) {
 		"scopes": scope,                // token scope - not a standard claim
 	}
 	token.Claims = claims
-	signedToken, err := token.SignedString(privKey)
+	signedToken, _ := token.SignedString(privKey)
 
 	cl.JWTSigner = &goaclient.JWTSigner{
 		TokenSource: &goaclient.StaticTokenSource{

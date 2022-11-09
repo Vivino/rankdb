@@ -157,6 +157,7 @@ Enabled = true
 OpTimeout = "1s"
 
 [NewRelic]
+Enabled = false
 AppName = "rankdb"
 License = ""
 # TxTracerThreshold controls whether a transaction trace will be
@@ -170,3 +171,5 @@ ExcludeAttributes = ["password","header_Authorization","header_Cookie"]
 # Relic UI.  This is an optional setting.
 HostDisplayName = ""
 
+[Datadog]
+Enabled = false

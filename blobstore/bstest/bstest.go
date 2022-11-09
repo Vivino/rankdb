@@ -1,3 +1,4 @@
+//nolint
 // Package bstest supplies helpers to test blobstores.
 package bstest
 
@@ -255,6 +256,7 @@ func (t Test) Colliding(ctx context.Context, tt *testing.T) {
 	}
 	gRNG := rand.New(rand.NewSource(1337))
 	set, key := randStringRng(20, gRNG.Int63()), randStringRng(20, gRNG.Int63())
+	//nolint:errcheck
 	test := func(i int) {
 		rng := rand.New(rand.NewSource(int64(i)))
 		var blobSize = int(rng.Int63()%MaxBlobSize) + 1

@@ -29,7 +29,7 @@ var (
 	listenAddr net.Addr
 )
 
-func StartServices(logger goa.LogAdapter, ctx context.Context, err error) {
+func StartServices(logger goa.LogAdapter, ctx context.Context) {
 	shutdown.PreShutdownFn(func() {
 		close(shutdownStarted)
 	})
@@ -47,7 +47,12 @@ func StartServices(logger goa.LogAdapter, ctx context.Context, err error) {
 	service.Use(SetLogger())
 	service.Use(middleware.RequestID())
 	service.Use(middleware.LogRequest(false))
-	service.Use(NewRelicTx())
+	if nrApp.Enabled() {
+		service.Use(NewRelicTx())
+	}
+	if ddApp.Enabled() {
+		service.Use(DatadogTx())
+	}
 	service.Use(middleware.ErrorHandler(service, true))
 	service.Use(middleware.Recover())
 	service.Use(ShutdownMiddleware)

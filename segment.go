@@ -192,7 +192,7 @@ func (s *Segment) loadElements(ctx context.Context, store blobstore.WithSet, rea
 		}
 		return forReader, err
 	}
-	s.loader.Loading = make(chan struct{}, 0)
+	s.loader.Loading = make(chan struct{})
 	s.loader.LoadingMu.Unlock()
 	defer func() {
 		// Signal others we are loaded.
