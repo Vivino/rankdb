@@ -18,6 +18,7 @@ import (
 	"github.com/Vivino/rankdb/api"
 	"github.com/Vivino/rankdb/log"
 	"github.com/Vivino/rankdb/log/loggoa"
+	"github.com/Vivino/rankdb/memprofiler"
 	goalogrus "github.com/goadesign/goa/logging/logrus"
 	shutdown "github.com/klauspost/shutdown2"
 	"github.com/sirupsen/logrus"
@@ -60,7 +61,7 @@ func main() {
 	})
 
 	if *enableMemoryProfiler {
-		go ramMonitor(ctx, "/var/tmp/rankdb/memory-dumps")
+		go memprofiler.Run(ctx, "/var/tmp/rankdb/memory-dumps")
 	}
 
 	if *enableDebug {

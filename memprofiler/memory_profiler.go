@@ -1,4 +1,4 @@
-package main
+package memprofiler
 
 import (
 	"context"
@@ -16,7 +16,8 @@ import (
 
 const dumpTimeLayout = "2006-01-02-150405"
 
-func ramMonitor(ctx context.Context, path string) {
+// Run monitors the memory-usage of your application, and dumps profiles at peak usage.
+func Run(ctx context.Context, path string) {
 	// Don't dump in the quiet period while starting up.
 	const (
 		quietPeriod = 3 * time.Minute
