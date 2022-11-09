@@ -18,14 +18,16 @@ import (
 	"github.com/Vivino/rankdb/api"
 	"github.com/Vivino/rankdb/log"
 	"github.com/Vivino/rankdb/log/loggoa"
+	"github.com/Vivino/rankdb/memprofiler"
 	goalogrus "github.com/goadesign/goa/logging/logrus"
 	shutdown "github.com/klauspost/shutdown2"
 	"github.com/sirupsen/logrus"
 )
 
 var (
-	configPath  = flag.String("config", "./conf/conf.toml", "Path for config to use.")
-	enableDebug = flag.Bool("restart", false, "Enable rapid restart mode, press ' and <return>.")
+	configPath           = flag.String("config", "./conf/conf.toml", "Path for config to use.")
+	enableDebug          = flag.Bool("restart", false, "Enable rapid restart mode, press ' and <return>.")
+	enableMemoryProfiler = flag.Bool("memory-profiler", false, "Enable memory profiler")
 
 	// SIGUSR2 signal if available.
 	usr2Signal os.Signal
@@ -57,6 +59,10 @@ func main() {
 			_ = pprof.Lookup("goroutine").WriteTo(lr.Out, 1)
 		})
 	})
+
+	if *enableMemoryProfiler {
+		go memprofiler.Run(ctx, "/var/tmp/rankdb/memory-dumps")
+	}
 
 	if *enableDebug {
 		go func() {
