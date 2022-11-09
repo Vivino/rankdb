@@ -26,7 +26,7 @@ import (
 	"github.com/goadesign/goa"
 	lru "github.com/hashicorp/golang-lru"
 	shutdown "github.com/klauspost/shutdown2"
-	"github.com/mattn/go-colorable"
+	colorable "github.com/mattn/go-colorable"
 	"github.com/sirupsen/logrus"
 )
 
