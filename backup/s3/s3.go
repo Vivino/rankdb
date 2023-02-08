@@ -33,7 +33,9 @@ func New(key, bucket string, c client.ConfigProvider) *File {
 }
 
 func (f *File) Save(ctx context.Context) (io.WriteCloser, error) {
-	uploader := s3manager.NewUploader(f.Client)
+	uploader := s3manager.NewUploader(f.Client, func(u *s3manager.Uploader) {
+		u.PartSize = 64 * 1024 * 1024 // 64MB per part. Default is 5MB
+	})
 	reader, writer := io.Pipe()
 	cType := "application/octet-stream"
 	acl := "bucket-owner-full-control"
