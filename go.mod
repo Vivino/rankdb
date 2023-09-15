@@ -33,4 +33,4 @@ require (
 	gopkg.in/DataDog/dd-trace-go.v1 v1.37.0
 )
 
-go 1.16
+go 1.17
