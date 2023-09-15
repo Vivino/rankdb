@@ -2,7 +2,7 @@ module github.com/Vivino/rankdb
 
 require (
 	github.com/BurntSushi/toml v0.3.1
-	github.com/aerospike/aerospike-client-go v2.2.0+incompatible
+	github.com/aerospike/aerospike-client-go/v6 v6.12.0
 	github.com/aws/aws-sdk-go v1.42.24
 	github.com/cenkalti/backoff v0.0.0-20170921171023-61ba96c4d100
 	github.com/dgraph-io/badger v1.6.0
@@ -10,7 +10,7 @@ require (
 	github.com/dimfeld/httppath v0.0.0-20170720192232-ee938bf73598 // indirect
 	github.com/dimfeld/httptreemux v4.0.1+incompatible // indirect
 	github.com/goadesign/goa v1.4.1
-	github.com/google/go-cmp v0.5.7
+	github.com/google/go-cmp v0.5.9
 	github.com/google/gxui v0.0.0-20151028112939-f85e0a97b3a4 // indirect
 	github.com/goreleaser/goreleaser v1.2.5
 	github.com/hashicorp/golang-lru v0.5.4
@@ -26,11 +26,10 @@ require (
 	github.com/tinylib/msgp v1.1.2
 	github.com/ttacon/chalk v0.0.0-20160626202418-22c06c80ed31 // indirect
 	github.com/ugorji/go/codec v1.1.7
-	github.com/yuin/gopher-lua v0.0.0-20160527050859-47f0f792b296 // indirect
 	github.com/zach-klippenstein/goregen v0.0.0-20160303162051-795b5e3961ea // indirect
 	go.etcd.io/bbolt v1.3.5
 	golang.org/x/lint v0.0.0-20210508222113-6edffad5e616
-	golang.org/x/tools v0.1.10
+	golang.org/x/tools v0.13.0
 	gopkg.in/DataDog/dd-trace-go.v1 v1.37.0
 )
 
