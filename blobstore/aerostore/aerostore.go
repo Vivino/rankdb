@@ -13,8 +13,8 @@ import (
 
 	"github.com/Vivino/rankdb/blobstore"
 	"github.com/Vivino/rankdb/log"
-	as "github.com/aerospike/aerospike-client-go"
-	astypes "github.com/aerospike/aerospike-client-go/types"
+	as "github.com/aerospike/aerospike-client-go/v6"
+	astypes "github.com/aerospike/aerospike-client-go/v6/types"
 )
 
 // AeroStore provides Aerospike storage.
@@ -67,6 +67,7 @@ func (a *AeroStore) prefix(key string) string {
 }
 
 func (a *AeroStore) Get(ctx context.Context, set, key string) ([]byte, error) {
+	var err error
 	k, err := as.NewKey(a.ns, set, a.prefix(key))
 	if err != nil {
 		log.Error(ctx, err.Error())
@@ -75,7 +76,7 @@ func (a *AeroStore) Get(ctx context.Context, set, key string) ([]byte, error) {
 
 	record, err := a.c.Get(a.BasePolicy, k)
 	if err != nil {
-		if err == astypes.ErrKeyNotFound {
+		if ase, ok := err.(as.Error); ok && ase.Matches(astypes.KEY_NOT_FOUND_ERROR) {
 			err = blobstore.ErrBlobNotFound
 		}
 		return nil, err
