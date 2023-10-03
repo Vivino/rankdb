@@ -7,7 +7,7 @@ require (
 	github.com/cenkalti/backoff v0.0.0-20170921171023-61ba96c4d100
 	github.com/dgraph-io/badger v1.6.0
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
-	github.com/goadesign/goa v1.4.1
+	github.com/goadesign/goa v1.4.3
 	github.com/google/go-cmp v0.5.9
 	github.com/goreleaser/goreleaser v1.2.5
 	github.com/hashicorp/golang-lru v0.5.4
