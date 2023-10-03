@@ -17,18 +17,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Set up Go
-        uses: actions/setup-go@v3
+        uses: actions/setup-go@v4
         with:
           go-version: ${{ matrix.go-version }}
       - name: golangci-lint
-        # Note: this is @v3.2.0.
-        uses: golangci/golangci-lint-action@537aa1903e5d359d0b27dbc19ddd22c5087f3fbc
+        uses: golangci/golangci-lint-action@v3
         with:
-          version: v1.43
+          version: v1.54.2
           args: --timeout=5m
+          install-mode: binary
       - name: Tests
         run: |
-          go mod tidy
+          go mod tidy -compat=1.17
           go test -v ./...
           go test -cpu=1 -short -race ./...
           go test -cpu=4 -short -race ./...
@@ -38,7 +38,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Set up Go
-        uses: actions/setup-go@v3
+        uses: actions/setup-go@v4
         with:
           go-version: 1.17.x
 
