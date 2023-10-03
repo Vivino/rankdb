@@ -20,7 +20,6 @@ import (
 	"github.com/Vivino/rankdb/api/app"
 	"github.com/Vivino/rankdb/log"
 	"github.com/goadesign/goa"
-	goajwt "github.com/goadesign/goa/middleware/security/jwt"
 	"github.com/golang-jwt/jwt/v4"
 )
 
@@ -53,7 +52,7 @@ func NewJWTMiddleware() (goa.Middleware, error) {
 	if len(keys) == 0 {
 		return nil, errors.New("no public keys found")
 	}
-	return goajwt.New(keys, nil, app.NewJWTSecurity()), nil
+	return NewJWT(keys, nil, app.NewJWTSecurity()), nil
 }
 
 // LoadJWTPublicKeys loads PEM encoded RSA public keys used to validate and decrypt the JWT.
@@ -82,13 +81,13 @@ func LoadJWTPublicKeys() ([]*rsa.PublicKey, error) {
 }
 
 func HasAccessToList(ctx context.Context, ids ...rankdb.ListID) error {
-	token := goajwt.ContextJWT(ctx)
+	token := ContextJWT(ctx)
 	if token == nil {
 		return nil
 	}
 	claims, ok := token.Claims.(jwt.MapClaims)
 	if !ok {
-		return goajwt.ErrJWTError("unsupported claims shape")
+		return ErrJWTError("unsupported claims shape")
 	}
 	if val, ok := claims["only_lists"].(string); ok {
 		// Check all ids
@@ -102,23 +101,47 @@ func HasAccessToList(ctx context.Context, ids ...rankdb.ListID) error {
 				}
 			}
 			if !ok {
-				return goajwt.ErrJWTError("Access not granted to list " + string(id))
+				return ErrJWTError("Access not granted to list " + string(id))
 			}
 		}
 	}
 	return nil
 }
 
+type contextKey int
+
+const (
+	jwtKey contextKey = iota + 1
+)
+
+// WithJWT creates a child context containing the given JWT.
+func WithJWT(ctx context.Context, t *jwt.Token) context.Context {
+	return context.WithValue(ctx, jwtKey, t)
+}
+
+// ContextJWT retrieves the JWT token from a `context` that went through our security middleware.
+func ContextJWT(ctx context.Context) *jwt.Token {
+	token, ok := ctx.Value(jwtKey).(*jwt.Token)
+	if !ok {
+		return nil
+	}
+	return token
+}
+
+// ErrJWTError is the error returned by this middleware when any sort of validation or assertion
+// fails during processing.
+var ErrJWTError = goa.NewErrorClass("jwt_security_error", 401)
+
 // HasAccessToElement returns true
 // Not optimized for big lists of IDs.
 func HasAccessToElement(ctx context.Context, ids ...rankdb.ElementID) error {
-	token := goajwt.ContextJWT(ctx)
+	token := ContextJWT(ctx)
 	if token == nil {
 		return nil
 	}
 	claims, ok := token.Claims.(jwt.MapClaims)
 	if !ok {
-		return goajwt.ErrJWTError("unsupported claims shape")
+		return ErrJWTError("unsupported claims shape")
 	}
 	if val, ok := claims["only_elements"].(string); ok {
 		lists := strings.Split(val, ",")
@@ -132,7 +155,7 @@ func HasAccessToElement(ctx context.Context, ids ...rankdb.ElementID) error {
 				}
 			}
 			if !ok {
-				return goajwt.ErrJWTError(fmt.Sprint("Access not granted to element ", id))
+				return ErrJWTError(fmt.Sprint("Access not granted to element ", id))
 			}
 		}
 	}
