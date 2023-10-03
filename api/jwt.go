@@ -19,9 +19,9 @@ import (
 	"github.com/Vivino/rankdb"
 	"github.com/Vivino/rankdb/api/app"
 	"github.com/Vivino/rankdb/log"
-	"github.com/dgrijalva/jwt-go"
 	"github.com/goadesign/goa"
 	goajwt "github.com/goadesign/goa/middleware/security/jwt"
+	"github.com/golang-jwt/jwt/v4"
 )
 
 // Change to enable JWT for all api endpoints.
@@ -36,7 +36,7 @@ var (
 // Note: the code below assumes the example is compiled against the master branch of goa.
 // If compiling against goa v1 the call to jwt.New needs to be:
 //
-//    middleware := jwt.New(keys, ForceFail(), app.NewJWTSecurity())
+//	middleware := jwt.New(keys, ForceFail(), app.NewJWTSecurity())
 func NewJWTMiddleware() (goa.Middleware, error) {
 	// Skip all JWT if needed.
 	if !enableJWT {
