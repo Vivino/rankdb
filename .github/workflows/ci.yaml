@@ -4,21 +4,19 @@ on:
     branches:
       - master
   pull_request:
-    branches: [ master ]
+    branches: [master]
 
 jobs:
   build:
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest] 
+        os: [ubuntu-latest, macos-latest, windows-latest]
         go-version: [1.17.x]
     runs-on: ${{ matrix.os }}
     steps:
-      -
-        name: Checkout
+      - name: Checkout
         uses: actions/checkout@v3
-      -
-        name: Set up Go
+      - name: Set up Go
         uses: actions/setup-go@v3
         with:
           go-version: ${{ matrix.go-version }}
@@ -28,8 +26,7 @@ jobs:
         with:
           version: v1.43
           args: --timeout=5m
-      -
-        name: Tests
+      - name: Tests
         run: |
           go mod tidy
           go test -v ./...
@@ -40,16 +37,16 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-    - name: Set up Go
-      uses: actions/setup-go@v3
-      with:
-        go-version: 1.17.x
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: 1.17.x
 
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: goreleaser deprecation
-      run: curl -sfL https://git.io/goreleaser | VERSION=v1.2.5 sh -s -- check
+      - name: goreleaser deprecation
+        run: curl -sfL https://git.io/goreleaser | VERSION=v1.2.5 sh -s -- check
 
-    - name: goreleaser snapshot
-      run: curl -sL https://git.io/goreleaser | VERSION=v1.2.5 sh -s -- --snapshot --skip-publish --rm-dist
+      - name: goreleaser snapshot
+        run: curl -sL https://git.io/goreleaser | VERSION=v1.2.5 sh -s -- --snapshot --skip-publish --rm-dist

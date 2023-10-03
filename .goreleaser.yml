@@ -11,8 +11,7 @@ before:
     - go mod download
 
 builds:
-  -
-    main: ./cmd/rankdb/main.go
+  - main: ./cmd/rankdb/main.go
     binary: rankdb
     goos:
       - linux
@@ -23,10 +22,9 @@ builds:
       - amd64
       - arm64
     goarm:
-      - 6
-      - 7
-  -
-    id: rankdb-cli
+      - "6"
+      - "7"
+  - id: rankdb-cli
     main: ./api/tool/rankdb-cli/main.go
     binary: rankdb-cli
     goos:
@@ -38,12 +36,11 @@ builds:
       - amd64
       - arm64
     goarm:
-      - 6
-      - 7
+      - "6"
+      - "7"
 
 archives:
-  -
-    replacements:
+  - replacements:
       darwin: Darwin
       linux: Linux
       windows: Windows
@@ -60,12 +57,12 @@ archives:
       - README.md
 
 checksum:
-  name_template: 'checksums.txt'
+  name_template: "checksums.txt"
 snapshot:
   name_template: "{{ .Tag }}-next"
 changelog:
   sort: asc
   filters:
     exclude:
-    - '^docs:'
-    - '^test:'
+      - "^docs:"
+      - "^test:"
