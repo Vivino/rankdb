@@ -24,10 +24,10 @@ import (
 	"github.com/Vivino/rankdb/log"
 	"github.com/Vivino/rankdb/log/loggoa"
 	"github.com/Vivino/rankdb/log/testlogger"
-	jwtgo "github.com/dgrijalva/jwt-go"
 	"github.com/goadesign/goa"
 	goaclient "github.com/goadesign/goa/client"
 	goalogrus "github.com/goadesign/goa/logging/logrus"
+	jwtgo "github.com/golang-jwt/jwt/v4"
 	shutdown "github.com/klauspost/shutdown2"
 	"github.com/sirupsen/logrus"
 )

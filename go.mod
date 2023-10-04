@@ -8,8 +8,8 @@ require (
 	github.com/aws/aws-sdk-go v1.42.24
 	github.com/cenkalti/backoff v0.0.0-20170921171023-61ba96c4d100
 	github.com/dgraph-io/badger v1.6.0
-	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/goadesign/goa v1.4.3
+	github.com/golang-jwt/jwt/v4 v4.5.0
 	github.com/google/go-cmp v0.5.9
 	github.com/goreleaser/goreleaser v1.2.5
 	github.com/hashicorp/golang-lru v0.5.4
@@ -110,7 +110,6 @@ require (
 	github.com/go-telegram-bot-api/telegram-bot-api v4.6.4+incompatible // indirect
 	github.com/gobwas/glob v0.2.3 // indirect
 	github.com/gofrs/uuid v4.0.0+incompatible // indirect
-	github.com/golang-jwt/jwt/v4 v4.2.0 // indirect
 	github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
