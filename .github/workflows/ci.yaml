@@ -11,7 +11,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        go-version: [1.17.x]
+        go-version: [1.18.x]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
@@ -28,7 +28,7 @@ jobs:
           install-mode: binary
       - name: Tests
         run: |
-          go mod tidy -compat=1.17
+          go mod tidy
           go test -v ./...
           go test -cpu=1 -short -race ./...
           go test -cpu=4 -short -race ./...
@@ -40,7 +40,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v4
         with:
-          go-version: 1.17.x
+          go-version: 1.18.x
 
       - name: Checkout code
         uses: actions/checkout@v3

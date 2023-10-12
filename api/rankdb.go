@@ -118,7 +118,7 @@ var (
 func StartServer(ctx context.Context, confData io.Reader, lr *logrus.Logger) error {
 	bgCtx = ctx
 	config.LogInfo = true
-	if _, err := toml.DecodeReader(confData, &config); err != nil {
+	if _, err := toml.NewDecoder(confData).Decode(&config); err != nil {
 		return err
 	}
 
