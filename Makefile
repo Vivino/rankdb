@@ -1,7 +1,6 @@
 COMMIT := $(shell git rev-parse HEAD)
 COMMIT_SHORT := $(shell git rev-parse HEAD | cut -c -7)
 PROJECT := github.com/Vivino/rankdb
-WITH_MODULES := GO111MODULE=on GOSUMDB=off GOPROXY=https://gomods.vivino.com,https://proxy.golang.org,direct
 BUILD_ARCH :=
 export GO111MODULE = on
 
@@ -56,6 +55,3 @@ commit:
 push-image:
 	docker push ${IMAGE}:${VERSION}
 	docker push ${IMAGE}:latest
-
-tidy: clean
-	${WITH_MODULES} go mod tidy -v
