@@ -2,8 +2,6 @@ module github.com/Vivino/rankdb
 
 go 1.23
 
-toolchain go1.23.0
-
 require (
 	github.com/BurntSushi/toml v1.3.2
 	github.com/aerospike/aerospike-client-go/v6 v6.12.0
