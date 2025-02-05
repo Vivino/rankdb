@@ -680,7 +680,7 @@ func (s *Segments) Verify(ctx context.Context, bs blobstore.WithSet) error {
 
 			prefix := fmt.Sprintf("Segment %v:", v.ID)
 			if v.Updated == 0 {
-				return fmt.Errorf(prefix + "Updated time not set")
+				return fmt.Errorf("%sUpdated time not set", prefix)
 			}
 			if idx, ok := foundSegs[v.ID]; ok {
 				return fmt.Errorf(prefix+"Duplicate segment ID, at index %d and %d", idx, i)
@@ -706,10 +706,10 @@ func (s *Segments) Verify(ctx context.Context, bs blobstore.WithSet) error {
 				if s.IsIndex {
 					// MaxTie should be 0 on indexes
 					if v.MinTie != 0 {
-						return fmt.Errorf(prefix + "Index segment did not end with mintie 0.")
+						return fmt.Errorf("%sIndex segment did not end with mintie 0", prefix)
 					}
 					if v.MaxTie != math.MaxUint32 {
-						return fmt.Errorf(prefix + "Index segment did not start with maxtie MAX.")
+						return fmt.Errorf("%sIndex segment did not start with maxtie MAX", prefix)
 					}
 				}
 			}

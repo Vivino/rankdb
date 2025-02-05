@@ -45,7 +45,7 @@ func (c *ListsController) Create(ctx *app.CreateListsContext) error {
 	opts = append(opts, rankdb.WithListOption.Metadata(ctx.Payload.Metadata))
 	opts = append(opts, rankdb.WithListOption.MergeSplitSize(ctx.Payload.MergeSize, ctx.Payload.SplitSize))
 	opts = append(opts, rankdb.WithListOption.LoadIndex(ctx.Payload.LoadIndex))
-	if ctx.Payload.Populate != nil && len(ctx.Payload.Populate) > 0 {
+	if len(ctx.Payload.Populate) > 0 {
 		elems := morph.ApiElements{In: ctx.Payload.Populate}.Elements()
 		elems.UpdateTime(time.Now())
 		elems.Deduplicate()
