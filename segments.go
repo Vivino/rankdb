@@ -683,7 +683,7 @@ func (s *Segments) Verify(ctx context.Context, bs blobstore.WithSet) error {
 				return fmt.Errorf("%sUpdated time not set", prefix)
 			}
 			if idx, ok := foundSegs[v.ID]; ok {
-				return fmt.Errorf(prefix+"Duplicate segment ID, at index %d and %d", idx, i)
+				return fmt.Errorf("%sDuplicate segment ID, at index %d and %d", prefix, idx, i)
 			}
 			foundSegs[v.ID] = i
 
@@ -691,7 +691,7 @@ func (s *Segments) Verify(ctx context.Context, bs blobstore.WithSet) error {
 			if i == 0 {
 				// First segment should start at max.
 				if v.Max != math.MaxUint64 || v.MaxTie != math.MaxUint32 {
-					return fmt.Errorf(prefix+"First segment did not start at maximum, was %v, %v", v.Max, v.MaxTie)
+					return fmt.Errorf("%sFirst segment did not start at maximum, was %v, %v", prefix, v.Max, v.MaxTie)
 				}
 			} else {
 				s.SegmentsLock.RLock()
@@ -700,8 +700,8 @@ func (s *Segments) Verify(ctx context.Context, bs blobstore.WithSet) error {
 				// Maximum of this should be just after minimum of previous
 				wantScore, wantTie := Element{Score: prev.Min, TieBreaker: prev.MinTie}.PrevMax()
 				if v.Max != wantScore || v.MaxTie != wantTie {
-					return fmt.Errorf(prefix+"Does not line up with previous segment. Want score, tie (%d, %d), got (%d, %d)",
-						wantScore, wantTie, v.Max, v.MaxTie)
+					return fmt.Errorf("%sDoes not line up with previous segment. Want score, tie (%d, %d), got (%d, %d)",
+						prefix, wantScore, wantTie, v.Max, v.MaxTie)
 				}
 				if s.IsIndex {
 					// MaxTie should be 0 on indexes
@@ -717,7 +717,7 @@ func (s *Segments) Verify(ctx context.Context, bs blobstore.WithSet) error {
 			if i == len(s.Segments)-1 {
 				// Last element should go down to 0
 				if v.Min != 0 || v.MinTie != 0 {
-					return fmt.Errorf(prefix+"Last segment did not end at 0, was %v, %v", v.Min, v.MinTie)
+					return fmt.Errorf("%sLast segment did not end at 0, was %v, %v", prefix, v.Min, v.MinTie)
 				}
 			}
 			return nil
@@ -756,20 +756,20 @@ func (s *Segments) VerifyElements(ctx context.Context, bs blobstore.WithSet, IDs
 
 			prefix := fmt.Sprintf("Segment ID %v (#%d) Elements:", seg.ID, i)
 			if !sort.SliceIsSorted(ls.elements, ls.elements.Sorter()) {
-				errC <- fmt.Errorf(prefix + "Not sorted")
+				errC <- fmt.Errorf("%sNot sorted", prefix)
 			}
 			if seg.N != len(ls.elements) {
-				errC <- fmt.Errorf(prefix+"Element counter wrong, is %d, should be %d", seg.N, len(ls.elements))
+				errC <- fmt.Errorf("%sElement counter wrong, is %d, should be %d", prefix, seg.N, len(ls.elements))
 			}
 			start, end := seg.FilterIdx(ls.elements)
 			if start != 0 {
 				log.Info(ctx, "Extra elements before start", "elements", len(ls.elements[start:]), "segment", seg)
-				errC <- fmt.Errorf(prefix+"%d Element(s) does not belong at START of segment", start)
+				errC <- fmt.Errorf("%s%d Element(s) does not belong at START of segment", prefix, start)
 			}
 			if end != len(ls.elements) {
 				log.Info(ctx, "Extra elements after END", "elements", len(ls.elements[end:]), "segment", seg)
 
-				err := fmt.Errorf(prefix+"%d Element(s) does not belong at END of segment", len(ls.elements)-end)
+				err := fmt.Errorf("%s%d Element(s) does not belong at END of segment", prefix, len(ls.elements)-end)
 				errC <- err
 			}
 			if seg.N != len(ls.elements) {
@@ -781,7 +781,7 @@ func (s *Segments) VerifyElements(ctx context.Context, bs blobstore.WithSet, IDs
 			defer elemsMu.Unlock()
 			for _, elem := range ls.elements {
 				if _, ok := elems[elem.ID]; ok {
-					errC <- fmt.Errorf(prefix+"Duplicate element ID: %v", elem.ID)
+					errC <- fmt.Errorf("%sDuplicate element ID: %v", prefix, elem.ID)
 					return
 				}
 				if s.IsIndex {
@@ -790,7 +790,7 @@ func (s *Segments) VerifyElements(ctx context.Context, bs blobstore.WithSet, IDs
 					elems[elem.ID] = seg.ID
 				}
 				if elem.Updated == 0 {
-					errC <- fmt.Errorf(prefix+"Element %d does not have time set", 0)
+					errC <- fmt.Errorf("%sElement 0 does not have time set", prefix)
 					return
 				}
 			}
