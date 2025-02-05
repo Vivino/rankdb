@@ -26,6 +26,7 @@ import (
 
 // List contains the segments representing a list
 // as well as the index to look up segments by object ID.
+//
 //msgp:tuple List
 type List struct {
 	sync.RWMutex `msg:"-" json:"-"`
@@ -55,6 +56,7 @@ type List struct {
 
 // ListOption can be used to specify options when creating a list.
 // Use either directly or use WithListOption.
+//
 //msgp:ignore ListOption
 type ListOption func(*listOptions) error
 
@@ -463,9 +465,9 @@ func (l *List) saveSegments(ctx context.Context, bs blobstore.Store, s *segments
 	if !s.readOnly {
 		l.updateSegments(ctx, s)
 	}
-	l.RLock()
+	l.RWMutex.RLock()
 	set := l.Set
-	l.RUnlock()
+	l.RWMutex.RUnlock()
 	store := blobstore.StoreWithSet(bs, set)
 	if s.scores != nil {
 		err := s.scores.Save(ctx, store)
@@ -497,15 +499,15 @@ func (l *List) cloneElements(ctx context.Context, bs blobstore.Store, org *List)
 	oScores := oSegs.scores
 	defer oSegs.unlock()
 
-	org.RLock()
+	org.RWMutex.RLock()
 	oSet := org.Set
-	org.RUnlock()
+	org.RWMutex.RUnlock()
 
-	l.RLock()
+	l.RWMutex.RLock()
 	dSet := l.Set
 	dMergeSize := l.MergeSize
 	dSplitSize := l.SplitSize
-	l.RUnlock()
+	l.RWMutex.RUnlock()
 
 	bsDst := blobstore.StoreWithSet(bs, dSet)
 	newSegments := l.newSegments(ctx, len(oScores.Segments), false, nil)
@@ -575,18 +577,18 @@ func (l *List) Verify(ctx context.Context, bs blobstore.Store) error {
 
 // Verify a list without loading elements.
 func (l *List) verify(ctx context.Context, bs blobstore.Store, segs *segments) error {
-	l.RLock()
+	l.RWMutex.RLock()
 	ctx = log.WithFn(ctx, "list_id", l.ID)
 	set := l.Set
 	lMergeSize := l.MergeSize
 	lSplitSize := l.SplitSize
 	lScores := l.Scores
 	lIndex := l.Index
-	l.RUnlock()
+	l.RWMutex.RUnlock()
 
 	err := func() error {
-		l.RLock()
-		defer l.RUnlock()
+		l.RWMutex.RLock()
+		defer l.RWMutex.RUnlock()
 		if l.Scores.Unset() {
 			return fmt.Errorf("Score Segments ID not set on list.")
 		}
@@ -671,9 +673,9 @@ func (l *List) verify(ctx context.Context, bs blobstore.Store, segs *segments) e
 
 // VerifyElements verifies elements in list.
 func (l *List) VerifyElements(ctx context.Context, bs blobstore.Store) error {
-	l.RLock()
+	l.RWMutex.RLock()
 	ctx = log.WithFn(ctx, "list_id", l.ID)
-	l.RUnlock()
+	l.RWMutex.RUnlock()
 	// We want a consistent view of elements/indexes, so we need update.
 	segs, err := l.loadSegments(ctx, bs, segsReadOnly|segsLockUpdates)
 	if err != nil {
@@ -687,9 +689,9 @@ func (l *List) VerifyElements(ctx context.Context, bs blobstore.Store) error {
 // Caller should hold list updatelock for full consistency.
 func (l *List) verifyElements(ctx context.Context, bs blobstore.Store, segs *segments) error {
 	ctx = log.WithFn(ctx)
-	l.RLock()
+	l.RWMutex.RLock()
 	store := blobstore.StoreWithSet(bs, l.Set)
-	l.RUnlock()
+	l.RWMutex.RUnlock()
 	var ids map[ElementID]SegmentID
 
 	// We do not get the update lock since caller may be holding it.
@@ -740,10 +742,10 @@ func (l *List) reindex(ctx context.Context, bs blobstore.Store, segs *segments) 
 	}
 	ctx = log.WithFn(ctx, "list_id", l.ID)
 	store := blobstore.StoreWithSet(bs, l.Set)
-	l.RLock()
+	l.RWMutex.RLock()
 	mergeSize := l.MergeSize
 	splitSize := l.SplitSize
-	l.RUnlock()
+	l.RWMutex.RUnlock()
 
 	idx, err := segs.scores.ElementIndexAll(ctx, store)
 	if err != nil {
@@ -809,8 +811,8 @@ func (l *List) VerifyUnlocked(ctx context.Context, timeout time.Duration) error 
 	ok = make(chan struct{})
 
 	// We need read lock.
-	l.RLock()
-	defer l.RUnlock()
+	l.RWMutex.RLock()
+	defer l.RWMutex.RUnlock()
 	testLock(log.Logger(ctx).New("lock", "list.loadingLock"), fail, &l.loadingLock, wg)
 	testLock(log.Logger(ctx).New("lock", "list.segmentsLock"), fail, &l.segmentsLock, wg)
 	testLock(log.Logger(ctx).New("lock", "list.updateLock"), fail, &l.updateLock, wg)
@@ -887,9 +889,9 @@ func (l *List) populate(ctx context.Context, bs blobstore.Store, e Elements, seg
 	ctx = log.WithFn(ctx, "list_id", l.ID)
 	store := blobstore.StoreWithSet(bs, l.Set)
 
-	l.RLock()
+	l.RWMutex.RLock()
 	hasValid := (!l.Scores.Unset() || !l.Index.Unset()) && segs != nil
-	l.RUnlock()
+	l.RWMutex.RUnlock()
 	if hasValid {
 		err := l.deleteAll(ctx, bs, segs)
 		if err != nil {
@@ -902,7 +904,7 @@ func (l *List) populate(ctx context.Context, bs blobstore.Store, e Elements, seg
 	}
 
 	// Retain full lock while populating.
-	l.Lock()
+	l.RWMutex.Lock()
 
 	// Above ~200k we get significant slowdown, we defer these.
 	var deferred Elements
@@ -939,7 +941,7 @@ func (l *List) populate(ctx context.Context, bs blobstore.Store, e Elements, seg
 	ids := IndexElements{make(Elements, 0, len(e))}
 	scores, err := NewSegmentsElements(ctx, store, split, &ids)
 	if err != nil {
-		l.Unlock()
+		l.RWMutex.Unlock()
 		return segs, err
 	}
 	scores.cache = l.cache
@@ -955,7 +957,7 @@ func (l *List) populate(ctx context.Context, bs blobstore.Store, e Elements, seg
 	}
 	idx.cache = l.cache
 	segs.index = idx
-	l.Unlock()
+	l.RWMutex.Unlock()
 
 	if len(deferred) > 0 {
 		l.updateSegments(ctx, segs)
@@ -1061,9 +1063,9 @@ func (l *List) ReleaseSegments(ctx context.Context) {
 	var gotLoading, gotSegments, cancelled bool
 	var done = make(chan struct{})
 	var mu sync.Mutex
-	l.RLock()
+	l.RWMutex.RLock()
 	listID := l.ID
-	l.RUnlock()
+	l.RWMutex.RUnlock()
 
 	// We add a one minute timeout, since we have seen deadlocks here.
 	const timeout = time.Minute
@@ -1144,8 +1146,8 @@ func (l *List) deleteAll(ctx context.Context, bs blobstore.Store, segs *segments
 	if !segs.updateLocked {
 		return errors.New("deleteAll: segments without update lock provided")
 	}
-	l.Lock()
-	defer l.Unlock()
+	l.RWMutex.Lock()
+	defer l.RWMutex.Unlock()
 
 	store := blobstore.StoreWithSet(bs, l.Set)
 	if segs.scores != nil {
@@ -1171,9 +1173,9 @@ func (l *List) deleteAll(ctx context.Context, bs blobstore.Store, segs *segments
 // May return less than requested elements if duplicates are provided or elements could not be found.
 func (l *List) getIndexElements(ctx context.Context, bs blobstore.Store, ids []ElementID, segs *segments) (IndexElements, error) {
 	ctx = log.WithFn(ctx)
-	l.RLock()
+	l.RWMutex.RLock()
 	set := l.Set
-	l.RUnlock()
+	l.RWMutex.RUnlock()
 
 	// Look up element ids in index to get their segment.
 	var scoreMap = make(map[uint64]struct{}, len(ids))
@@ -1228,9 +1230,9 @@ func (l *List) GetElements(ctx context.Context, bs blobstore.Store, ids []Elemen
 func (l *List) getElements(ctx context.Context, bs blobstore.Store, ids []ElementID, radius int, segs *segments) (RankedElements, error) {
 	ctx = log.WithFn(ctx)
 	scores := segs.scores
-	l.RLock()
+	l.RWMutex.RLock()
 	set := l.Set
-	l.RUnlock()
+	l.RWMutex.RUnlock()
 
 	// Disallow updates to scores until we have found the elements
 	e, err := l.getIndexElements(ctx, bs, ids, segs)
@@ -1259,10 +1261,10 @@ func (l *List) UpdateElements(ctx context.Context, bs blobstore.Store, elems Ele
 	scores := segs.scores
 	index := segs.index
 
-	l.RLock()
+	l.RWMutex.RLock()
 	ctx = log.WithValues(ctx, "list_id", l.ID)
 	set := l.Set
-	l.RUnlock()
+	l.RWMutex.RUnlock()
 
 	store := blobstore.StoreWithSet(bs, set)
 	scores.reindex()
@@ -1511,9 +1513,9 @@ func (l *List) DeleteElements(ctx context.Context, bs blobstore.Store, ids []Ele
 	scores := segs.scores
 	index := segs.index
 
-	l.RLock()
+	l.RWMutex.RLock()
 	set := l.Set
-	l.RUnlock()
+	l.RWMutex.RUnlock()
 
 	// Retain scores lock until index is updated
 	err = func() error {
@@ -1648,9 +1650,9 @@ func (l *List) GetRankTop(ctx context.Context, bs blobstore.Store, offset, eleme
 // Requesting offset 0 will start with top ranked element.
 // Requesting offset equal to or grater than list length will return ErrOffsetOutOfBounds.
 func (l *List) getRankTop(ctx context.Context, bs blobstore.Store, offset, elements int, segs *segments) (Elements, error) {
-	l.RLock()
+	l.RWMutex.RLock()
 	set := l.Set
-	l.RUnlock()
+	l.RWMutex.RUnlock()
 
 	segIdx, eoff := segs.scores.segIdxTop(offset)
 	if segIdx < 0 {
@@ -1681,9 +1683,9 @@ func (l *List) GetRankBottom(ctx context.Context, bs blobstore.Store, offset, el
 // Requesting offset 0 will return the bottom element.
 // If offset is outside list range ErrOffsetOutOfBounds is returned.
 func (l *List) getRankBottom(ctx context.Context, bs blobstore.Store, offset, elements int, segs *segments) (Elements, error) {
-	l.RLock()
+	l.RWMutex.RLock()
 	set := l.Set
-	l.RUnlock()
+	l.RWMutex.RUnlock()
 	segIdx, eoff := segs.scores.segIdxBottom(offset)
 	if segIdx < 0 {
 		return nil, ErrOffsetOutOfBounds
@@ -1703,9 +1705,9 @@ func (l *List) GetRankScoreDesc(ctx context.Context, bs blobstore.Store, score u
 		return nil, err
 	}
 	defer segs.unlock()
-	l.RLock()
+	l.RWMutex.RLock()
 	set := l.Set
-	l.RUnlock()
+	l.RWMutex.RUnlock()
 	segIdx, above, total := segs.scores.segIdxScore(score)
 	// 	log.Info(ctx, "got", "segIdx",segIdx, "above", above, "total", total, "score", score)
 	if segIdx == -1 {
@@ -1742,9 +1744,9 @@ func (l *List) GetPercentile(ctx context.Context, bs blobstore.Store, percentile
 		return nil, err
 	}
 	defer segs.unlock()
-	l.RLock()
+	l.RWMutex.RLock()
 	set := l.Set
-	l.RUnlock()
+	l.RWMutex.RUnlock()
 
 	store := blobstore.StoreWithSet(bs, set)
 	segOffs, total := segs.scores.topOffsets()
@@ -1792,9 +1794,9 @@ func (l *List) Repair(ctx context.Context, bs blobstore.Store, clearIfErr bool) 
 	store := blobstore.StoreWithSet(bs, l.Set)
 	stats, _ := l.Stats(ctx, bs, false)
 
-	l.RLock()
+	l.RWMutex.RLock()
 	ctx = log.WithValues(ctx, "list_id", l.ID)
-	l.RUnlock()
+	l.RWMutex.RUnlock()
 
 	segs, err := l.loadSegments(ctx, bs, segsWritable|segsLockUpdates)
 	if err != nil {
@@ -1815,7 +1817,7 @@ func (l *List) Repair(ctx context.Context, bs blobstore.Store, clearIfErr bool) 
 	}()
 
 	// Now that no-one else is updating, make sure that no-one else reads from the list while we rebuild.
-	l.Lock()
+	l.RWMutex.Lock()
 	segs.scores.SegmentsLock.Lock()
 	segments := segs.scores.Segments
 	allElements := make(Elements, 0, stats.Elements)
@@ -1834,7 +1836,7 @@ func (l *List) Repair(ctx context.Context, bs blobstore.Store, clearIfErr bool) 
 		seg.unlock()
 	}
 	// Unlock so we can re-populate.
-	l.Unlock()
+	l.RWMutex.Unlock()
 	segs.scores.SegmentsLock.Unlock()
 
 	if allElements.Deduplicate() {
@@ -1861,13 +1863,13 @@ func (l *List) Backup(ctx context.Context, bs blobstore.Store, w *WriterMsgp) er
 	if err := w.SetVersion(backupVersion); err != nil {
 		return err
 	}
-	l.RLock()
+	l.RWMutex.RLock()
 	store := blobstore.StoreWithSet(bs, l.Set)
 	scores := ssegs.scores
 
 	// Save list metadata.
 	err = l.EncodeMsg(w.Writer())
-	l.RUnlock()
+	l.RWMutex.RUnlock()
 	if err != nil {
 		return err
 	}
@@ -2023,10 +2025,10 @@ func (l *List) checkSplit(ctx context.Context, bs blobstore.Store, segs *segment
 	scores := segs.scores
 	index := segs.index
 
-	l.RLock()
+	l.RWMutex.RLock()
 	splitSize := l.SplitSize
 	mergeSize := l.MergeSize
-	l.RUnlock()
+	l.RWMutex.RUnlock()
 
 	// Check if we should split using only read lock.
 	shouldSplitFn := func(s *Segments) bool {
@@ -2085,11 +2087,11 @@ func (l *List) split(ctx context.Context, bs blobstore.Store, segs *segments, me
 		defer segs.unlock()
 	}
 
-	l.RLock()
+	l.RWMutex.RLock()
 	splitSize := l.SplitSize
 	mergeSize := l.MergeSize
 	store := blobstore.StoreWithSet(bs, l.Set)
-	l.RUnlock()
+	l.RWMutex.RUnlock()
 
 	log.Info(ctx, "Splitting", "split_size", splitSize, "merge_size", mergeSize)
 	defer func() {

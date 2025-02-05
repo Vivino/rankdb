@@ -23,8 +23,8 @@ jobs:
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v3
         with:
-          version: v1.54.2
-          args: --timeout=5m
+          version: v1.60.1
+          args: --new-from-rev=master --timeout=5m
           install-mode: binary
       - name: Tests
         run: |
