@@ -140,9 +140,9 @@ func (m *Manager) StartListSplitter(ctx context.Context, store blobstore.Store, 
 			select {
 			case list := <-m.wantSplit:
 				t := time.Now()
-				list.RLock()
+				list.RWMutex.RLock()
 				ctx2 := log.WithValues(ctx, "list_id", list.ID)
-				list.RUnlock()
+				list.RWMutex.RUnlock()
 				log.Info(ctx2, "Splitting/Merging list")
 				err := list.split(ctx2, store, nil, true)
 				if err != nil {

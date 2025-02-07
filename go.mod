@@ -1,11 +1,11 @@
 module github.com/Vivino/rankdb
 
-go 1.18
+go 1.23
 
 require (
 	github.com/BurntSushi/toml v1.3.2
 	github.com/aerospike/aerospike-client-go/v6 v6.12.0
-	github.com/aws/aws-sdk-go v1.42.24
+	github.com/aws/aws-sdk-go v1.55.6
 	github.com/cenkalti/backoff v2.2.1+incompatible
 	github.com/dgraph-io/badger v1.6.0
 	github.com/goadesign/goa v1.4.3
@@ -23,8 +23,8 @@ require (
 	github.com/tinylib/msgp v1.1.2
 	github.com/ugorji/go/codec v1.1.7
 	go.etcd.io/bbolt v1.3.5
-	golang.org/x/lint v0.0.0-20210508222113-6edffad5e616
-	golang.org/x/tools v0.13.0
+	golang.org/x/lint v0.0.0-20241112194109-818c5a804067
+	golang.org/x/tools v0.29.0
 	gopkg.in/DataDog/dd-trace-go.v1 v1.37.0
 )
 
@@ -68,7 +68,7 @@ require (
 	github.com/apex/log v1.9.0 // indirect
 	github.com/armon/go-metrics v0.3.10 // indirect
 	github.com/atc0005/go-teams-notify/v2 v2.6.0 // indirect
-	github.com/aws/aws-sdk-go-v2 v1.11.2 // indirect
+	github.com/aws/aws-sdk-go-v2 v1.36.0 // indirect
 	github.com/aws/aws-sdk-go-v2/config v1.11.0 // indirect
 	github.com/aws/aws-sdk-go-v2/credentials v1.6.4 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.8.2 // indirect
@@ -79,7 +79,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/kms v1.11.1 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sso v1.6.2 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sts v1.11.1 // indirect
-	github.com/aws/smithy-go v1.11.0 // indirect
+	github.com/aws/smithy-go v1.22.2 // indirect
 	github.com/blakesmith/ar v0.0.0-20190502131153-809d4375e1fb // indirect
 	github.com/caarlos0/ctrlc v1.0.0 // indirect
 	github.com/caarlos0/env/v6 v6.8.0 // indirect
@@ -164,13 +164,13 @@ require (
 	gitlab.com/digitalxero/go-conventional-commit v1.0.7 // indirect
 	go.opencensus.io v0.24.0 // indirect
 	gocloud.dev v0.24.0 // indirect
-	golang.org/x/crypto v0.21.0 // indirect
-	golang.org/x/mod v0.12.0 // indirect
-	golang.org/x/net v0.23.0 // indirect
+	golang.org/x/crypto v0.32.0 // indirect
+	golang.org/x/mod v0.22.0 // indirect
+	golang.org/x/net v0.34.0 // indirect
 	golang.org/x/oauth2 v0.10.0 // indirect
-	golang.org/x/sync v0.3.0 // indirect
-	golang.org/x/sys v0.20.0 // indirect
-	golang.org/x/text v0.14.0 // indirect
+	golang.org/x/sync v0.10.0 // indirect
+	golang.org/x/sys v0.29.0 // indirect
+	golang.org/x/text v0.21.0 // indirect
 	golang.org/x/time v0.0.0-20211116232009-f0f3c7e86c11 // indirect
 	golang.org/x/xerrors v0.0.0-20220907171357-04be3eba64a2 // indirect
 	google.golang.org/api v0.126.0 // indirect

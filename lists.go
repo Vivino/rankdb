@@ -125,8 +125,8 @@ func (l Lists) Save(ctx context.Context, w io.Writer) error {
 			return true
 		}
 		n++
-		list.RLock()
-		defer list.RUnlock()
+		list.RWMutex.RLock()
+		defer list.RWMutex.RUnlock()
 		err = list.EncodeMsg(msg)
 		return err == nil
 	})
@@ -252,9 +252,9 @@ func (l *Lists) Prune(ctx context.Context) error {
 			log.Error(ctx, "Wrong list type:", "type", fmt.Sprintf("%T", value))
 			return true
 		}
-		list.RLock()
+		list.RWMutex.RLock()
 		li := list.LoadIndex
-		list.RUnlock()
+		list.RWMutex.RUnlock()
 		// If LoadIndex is specified we only prune elements.
 		if !li {
 			list.ReleaseSegments(ctx)
