@@ -88,6 +88,8 @@ var (
 
 		AWS struct {
 			Enabled    bool
+			AccessKey  string
+			SecretKey  string
 			Region     string
 			S3Endpoint string
 		}

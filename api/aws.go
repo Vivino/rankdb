@@ -9,6 +9,9 @@ import (
 
 	"github.com/Vivino/rankdb/log"
 	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/credentials"
+	"github.com/aws/aws-sdk-go/aws/credentials/ec2rolecreds"
+	"github.com/aws/aws-sdk-go/aws/ec2metadata"
 	"github.com/aws/aws-sdk-go/aws/session"
 )
 
@@ -22,6 +25,35 @@ func initAws(ctx context.Context) {
 		return
 	}
 
-	awsSession = session.Must(session.NewSession(aws.NewConfig().WithRegion(config.AWS.Region)))
+	cfg := aws.NewConfig().WithRegion(config.AWS.Region)
+	if config.AWS.S3Endpoint != "" {
+		cfg = cfg.WithEndpoint(config.AWS.S3Endpoint)
+	}
+
+	if config.AWS.AccessKey != "" && config.AWS.SecretKey != "" {
+		providers := []credentials.Provider{
+			&credentials.StaticProvider{
+				Value: credentials.Value{
+					AccessKeyID:     config.AWS.AccessKey,
+					SecretAccessKey: config.AWS.SecretKey,
+					SessionToken:    "",
+				},
+			},
+			&ec2rolecreds.EC2RoleProvider{
+				Client: ec2metadata.New(session.Must(session.NewSession())),
+			},
+			&credentials.EnvProvider{},
+		}
+
+		creds := credentials.NewChainCredentials(providers)
+		_, err := creds.Get()
+		if err != nil {
+			log.Error(ctx, "AWS not initialized", "error", err.Error())
+			return
+		}
+		cfg = cfg.WithCredentials(creds)
+	}
+
+	awsSession = session.Must(session.NewSession(cfg))
 	log.Info(ctx, "AWS initialized")
 }
