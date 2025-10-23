@@ -5,6 +5,7 @@ package api
 // See LICENSE file for license details
 
 import (
+	"fmt"
 	"strconv"
 	"time"
 
@@ -347,7 +348,7 @@ func (c *ListsController) Clone(ctx *app.CloneListsContext) error {
 		opts...,
 	)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to create new list: %w", err)
 	}
 
 	// Add to manager
@@ -355,5 +356,4 @@ func (c *ListsController) Clone(ctx *app.CloneListsContext) error {
 
 	// ListsController_Create: end_implement
 	return ctx.OKFull(morph.List{In: list}.Full(ctx, db.Storage, true))
-
 }
