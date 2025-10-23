@@ -147,11 +147,12 @@ func (l ListOption) Cache(cache Cache) ListOption {
 // Use WithListOption to access additional options.
 func NewList(ctx context.Context, id ListID, set string, bs blobstore.Store, opts ...ListOption) (*List, error) {
 	ctx = log.WithFn(ctx, "list_id", id)
+	log.Info(ctx, "Creating new list", "set", set, "list_id", id)
 	options := defaultListOptions()
 	for _, opt := range opts {
 		err := opt(&options)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("applying option: %v", err)
 		}
 	}
 	if set == "" {
@@ -174,13 +175,13 @@ func NewList(ctx context.Context, id ListID, set string, bs blobstore.Store, opt
 		e.UpdateTime(time.Now())
 		err := l.Populate(ctx, bs, e)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("populating list: %v", err)
 		}
 	}
 	if options.clone != nil {
 		err := l.cloneElements(ctx, bs, options.clone)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("cloning list: %v", err)
 		}
 	}
 	if l.Scores.Unset() {
@@ -189,7 +190,7 @@ func NewList(ctx context.Context, id ListID, set string, bs blobstore.Store, opt
 			segs.unlock()
 		}
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("initializing empty list: %v", err)
 		}
 	}
 	l.scores.cache = l.cache
