@@ -10,7 +10,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"math/rand"
@@ -129,7 +128,7 @@ func TestNewList_fail(t *testing.T) {
 	if err == nil {
 		t.Fatal("want error because storage is returns error")
 	}
-	if !errors.Is(err, blobstore.ErrTestIntentional) {
+	if err != blobstore.ErrTestIntentional {
 		t.Fatal("want blobstore.ErrTestIntentional, got ", err)
 	}
 }

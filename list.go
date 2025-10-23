@@ -190,7 +190,7 @@ func NewList(ctx context.Context, id ListID, set string, bs blobstore.Store, opt
 			segs.unlock()
 		}
 		if err != nil {
-			return nil, fmt.Errorf("initializing empty list: %v", err)
+			return nil, err
 		}
 	}
 	l.scores.cache = l.cache
