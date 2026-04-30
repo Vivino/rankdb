@@ -192,10 +192,20 @@ func (l Elements) FindIdx(id ElementID) (int, error) {
 
 // FindScoreIdx returns index of first element that matches score.
 func (l Elements) FindScoreIdx(score uint64) (int, error) {
-	for i := range l {
-		if l[i].Score == score {
-			return i, nil
+	// Binary search: elements are sorted descending by score.
+	// Find the first element with Score <= score, then check for match.
+	lo, hi := 0, len(l)
+	for lo < hi {
+		mid := lo + (hi-lo)/2
+		if l[mid].Score > score {
+			lo = mid + 1
+		} else {
+			hi = mid
 		}
+	}
+	// lo is the first index where Score <= score
+	if lo < len(l) && l[lo].Score == score {
+		return lo, nil
 	}
 	return 0, ErrNotFound
 }
@@ -204,22 +214,24 @@ func (l Elements) FindScoreIdx(score uint64) (int, error) {
 // Returns index of inserted item.
 func (l *Elements) Insert(e Element) int {
 	lst := *l
-	for i, le := range lst {
-		if le.Above(e) {
-			continue
+	// Binary search: find the first index where lst[i] is NOT above e.
+	// Elements are sorted descending by score, so we search for the insertion point.
+	lo, hi := 0, len(lst)
+	for lo < hi {
+		mid := lo + (hi-lo)/2
+		if lst[mid].aboveP(&e) {
+			lo = mid + 1
+		} else {
+			hi = mid
 		}
-		// Element should be placed at i
-		lst = append(lst, Element{})
-		copy(lst[i+1:], lst[i:])
-		lst[i] = e
-
-		*l = lst
-		return i
 	}
-	// Element should be last.
-	lst = append(lst, e)
+	i := lo
+	// Element should be placed at i
+	lst = append(lst, Element{})
+	copy(lst[i+1:], lst[i:])
+	lst[i] = e
 	*l = lst
-	return len(lst) - 1
+	return i
 }
 
 // Merge other elements into this list.
@@ -335,11 +347,17 @@ func (l *Elements) Add(e Element) (*Rank, error) {
 	if e.Updated == 0 {
 		e.Updated = uint32(time.Now().Unix())
 	}
-	_, err := l.FindIdx(e.ID)
-	if err == nil {
-		return l.Update(e)
+	// Single linear scan: try to find and delete existing, then binary search insert.
+	lst := *l
+	for i, elem := range lst {
+		if elem.ID == e.ID {
+			// Found existing element -- delete it and re-insert with new score.
+			lst = append(lst[:i], lst[i+1:]...)
+			*l = lst
+			return l.idxRank(l.Insert(e)), nil
+		}
 	}
-
+	// New element: just insert.
 	return l.idxRank(l.Insert(e)), nil
 }
 
@@ -362,9 +380,19 @@ func (l *Elements) Update(e Element) (*Rank, error) {
 	if e.Updated == 0 {
 		e.Updated = uint32(time.Now().Unix())
 	}
-	err := l.Delete(e.ID)
-	if err != nil {
-		return nil, err
+	// Combined delete + insert: single linear scan for delete, then binary search insert.
+	lst := *l
+	found := false
+	for i, elem := range lst {
+		if elem.ID == e.ID {
+			lst = append(lst[:i], lst[i+1:]...)
+			*l = lst
+			found = true
+			break
+		}
+	}
+	if !found {
+		return nil, ErrNotFound
 	}
 	return l.idxRank(l.Insert(e)), nil
 }
@@ -436,15 +464,23 @@ func (e Elements) FirstElementsWithScore(scores []uint64) Elements {
 		return nil
 	}
 	res := make(Elements, 0, len(scores))
-	top := scores[0]
-	for i := range e {
-		if e[i].Score <= top {
-			res = append(res, e[i])
-			if len(scores) <= 1 {
-				break
+	// Elements are sorted descending by score.
+	// For each score, binary search for the first element with Score <= score.
+	offset := 0
+	for _, score := range scores {
+		// Binary search in e[offset:] for first element with Score <= score.
+		lo, hi := offset, len(e)
+		for lo < hi {
+			mid := lo + (hi-lo)/2
+			if e[mid].Score > score {
+				lo = mid + 1
+			} else {
+				hi = mid
 			}
-			scores = scores[1:]
-			top = scores[0]
+		}
+		if lo < len(e) {
+			res = append(res, e[lo])
+			offset = lo + 1
 		}
 	}
 	return res

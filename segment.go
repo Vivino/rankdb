@@ -106,27 +106,38 @@ func (s *Segment) cacheID() string {
 // FilterIdx returns the indexes of the start and end of the slice of elements
 // that fall within the range of the segment.
 func (s *Segment) FilterIdx(e Elements) (start, end int) {
-	start = -1
-	startE := &Element{Score: s.Max, TieBreaker: s.MaxTie}
-	// Find first element not above startE
-	for i, elem := range e {
-		if !elem.aboveP(startE) {
-			start = i
-			break
-		}
-	}
-	if start == -1 {
+	if len(e) == 0 {
 		return 0, 0
 	}
-	endE := &Element{Score: s.Min, TieBreaker: s.MinTie, Updated: math.MaxUint32}
-	// Find first element that is below endE
-	end = len(e)
-	for i, elem := range e[start:] {
-		if !elem.aboveP(endE) {
-			end = i + start
-			break
+	startE := &Element{Score: s.Max, TieBreaker: s.MaxTie}
+	// Binary search: find first element not above startE.
+	// Elements are sorted descending, so we search for the transition point.
+	lo, hi := 0, len(e)
+	for lo < hi {
+		mid := lo + (hi-lo)/2
+		if e[mid].aboveP(startE) {
+			lo = mid + 1
+		} else {
+			hi = mid
 		}
 	}
+	start = lo
+	if start >= len(e) {
+		return 0, 0
+	}
+
+	endE := &Element{Score: s.Min, TieBreaker: s.MinTie, Updated: math.MaxUint32}
+	// Binary search from start: find first element that is NOT above endE.
+	lo, hi = start, len(e)
+	for lo < hi {
+		mid := lo + (hi-lo)/2
+		if e[mid].aboveP(endE) {
+			lo = mid + 1
+		} else {
+			hi = mid
+		}
+	}
+	end = lo
 	return start, end
 }
 
@@ -138,26 +149,32 @@ func (s *Segment) FilterScoresIdx(scores []uint64) (start, end int) {
 		return 0, 0
 	}
 
-	start = -1
-	// Find first element not above startE
-	for i, elem := range scores {
-		if elem <= s.Max {
-			start = i
-			break
+	// Binary search: find first score <= s.Max (scores are sorted descending).
+	lo, hi := 0, len(scores)
+	for lo < hi {
+		mid := lo + (hi-lo)/2
+		if scores[mid] > s.Max {
+			lo = mid + 1
+		} else {
+			hi = mid
 		}
 	}
-	if start == -1 {
+	start = lo
+	if start >= len(scores) {
 		return 0, 0
 	}
 
-	// Find first element that is below endE
-	end = len(scores)
-	for i, elem := range scores[start:] {
-		if elem <= s.Min {
-			end = i + start
-			break
+	// Binary search from start: find first score < s.Min.
+	lo, hi = start, len(scores)
+	for lo < hi {
+		mid := lo + (hi-lo)/2
+		if scores[mid] > s.Min {
+			lo = mid + 1
+		} else {
+			hi = mid
 		}
 	}
+	end = lo
 	return start, end
 }
 
