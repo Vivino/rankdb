@@ -190,8 +190,9 @@ func (l Elements) FindIdx(id ElementID) (int, error) {
 	return 0, ErrNotFound
 }
 
-// FindScoreIdx returns index of first element with Score <= score (if any).
+// FindScoreIdx returns index of first element that matches score.
 func (l Elements) FindScoreIdx(score uint64) (int, error) {
+	// Find the first element with Score <= score **if any**
 	i := sort.Search(len(l), func(i int) bool {
 		return l[i].Score <= score
 	})
