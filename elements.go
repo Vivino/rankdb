@@ -330,17 +330,13 @@ func (l *Elements) Add(e Element) (*Rank, error) {
 	if e.Updated == 0 {
 		e.Updated = uint32(time.Now().Unix())
 	}
-	// Single linear scan: try to find and delete existing, then binary search insert.
-	lst := *l
-	for i, elem := range lst {
-		if elem.ID == e.ID {
-			// Found existing element -- delete it and re-insert with new score.
-			lst = append(lst[:i], lst[i+1:]...)
-			*l = lst
-			return l.idxRank(l.Insert(e)), nil
-		}
+	_, err := l.FindIdx(e.ID)
+	if err == nil {
+		// element exists, update it
+		return l.Update(e)
 	}
-	// New element: just insert.
+
+	// insert a new element
 	return l.idxRank(l.Insert(e)), nil
 }
 
@@ -363,19 +359,9 @@ func (l *Elements) Update(e Element) (*Rank, error) {
 	if e.Updated == 0 {
 		e.Updated = uint32(time.Now().Unix())
 	}
-	// Combined delete + insert: single linear scan for delete, then binary search insert.
-	lst := *l
-	found := false
-	for i, elem := range lst {
-		if elem.ID == e.ID {
-			lst = append(lst[:i], lst[i+1:]...)
-			*l = lst
-			found = true
-			break
-		}
-	}
-	if !found {
-		return nil, ErrNotFound
+	err := l.Delete(e.ID)
+	if err != nil {
+		return nil, err
 	}
 	return l.idxRank(l.Insert(e)), nil
 }
