@@ -190,22 +190,13 @@ func (l Elements) FindIdx(id ElementID) (int, error) {
 	return 0, ErrNotFound
 }
 
-// FindScoreIdx returns index of first element that matches score.
+// FindScoreIdx returns index of first element with Score <= score (if any).
 func (l Elements) FindScoreIdx(score uint64) (int, error) {
-	// Binary search: elements are sorted descending by score.
-	// Find the first element with Score <= score, then check for match.
-	lo, hi := 0, len(l)
-	for lo < hi {
-		mid := lo + (hi-lo)/2
-		if l[mid].Score > score {
-			lo = mid + 1
-		} else {
-			hi = mid
-		}
-	}
-	// lo is the first index where Score <= score
-	if lo < len(l) && l[lo].Score == score {
-		return lo, nil
+	i := sort.Search(len(l), func(i int) bool {
+		return l[i].Score <= score
+	})
+	if i < len(l) && l[i].Score == score {
+		return i, nil
 	}
 	return 0, ErrNotFound
 }
@@ -214,18 +205,9 @@ func (l Elements) FindScoreIdx(score uint64) (int, error) {
 // Returns index of inserted item.
 func (l *Elements) Insert(e Element) int {
 	lst := *l
-	// Binary search: find the first index where lst[i] is NOT above e.
-	// Elements are sorted descending by score, so we search for the insertion point.
-	lo, hi := 0, len(lst)
-	for lo < hi {
-		mid := lo + (hi-lo)/2
-		if lst[mid].aboveP(&e) {
-			lo = mid + 1
-		} else {
-			hi = mid
-		}
-	}
-	i := lo
+	i := sort.Search(len(lst), func(i int) bool {
+		return !lst[i].aboveP(&e)
+	})
 	// Element should be placed at i
 	lst = append(lst, Element{})
 	copy(lst[i+1:], lst[i:])
@@ -464,23 +446,16 @@ func (e Elements) FirstElementsWithScore(scores []uint64) Elements {
 		return nil
 	}
 	res := make(Elements, 0, len(scores))
-	// Elements are sorted descending by score.
-	// For each score, binary search for the first element with Score <= score.
 	offset := 0
 	for _, score := range scores {
-		// Binary search in e[offset:] for first element with Score <= score.
-		lo, hi := offset, len(e)
-		for lo < hi {
-			mid := lo + (hi-lo)/2
-			if e[mid].Score > score {
-				lo = mid + 1
-			} else {
-				hi = mid
-			}
-		}
-		if lo < len(e) {
-			res = append(res, e[lo])
-			offset = lo + 1
+		sub := e[offset:]
+		i := sort.Search(len(sub), func(i int) bool {
+			return sub[i].Score <= score
+		})
+		i += offset
+		if i < len(e) {
+			res = append(res, e[i])
+			offset = i + 1
 		}
 	}
 	return res

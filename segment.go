@@ -12,6 +12,7 @@ import (
 	"errors"
 	"fmt"
 	"math"
+	"sort"
 	"sync"
 	"time"
 
@@ -110,34 +111,17 @@ func (s *Segment) FilterIdx(e Elements) (start, end int) {
 		return 0, 0
 	}
 	startE := &Element{Score: s.Max, TieBreaker: s.MaxTie}
-	// Binary search: find first element not above startE.
-	// Elements are sorted descending, so we search for the transition point.
-	lo, hi := 0, len(e)
-	for lo < hi {
-		mid := lo + (hi-lo)/2
-		if e[mid].aboveP(startE) {
-			lo = mid + 1
-		} else {
-			hi = mid
-		}
-	}
-	start = lo
+	start = sort.Search(len(e), func(i int) bool {
+		return !e[i].aboveP(startE)
+	})
 	if start >= len(e) {
 		return 0, 0
 	}
 
 	endE := &Element{Score: s.Min, TieBreaker: s.MinTie, Updated: math.MaxUint32}
-	// Binary search from start: find first element that is NOT above endE.
-	lo, hi = start, len(e)
-	for lo < hi {
-		mid := lo + (hi-lo)/2
-		if e[mid].aboveP(endE) {
-			lo = mid + 1
-		} else {
-			hi = mid
-		}
-	}
-	end = lo
+	end = start + sort.Search(len(e)-start, func(i int) bool {
+		return !e[start+i].aboveP(endE)
+	})
 	return start, end
 }
 
@@ -149,32 +133,16 @@ func (s *Segment) FilterScoresIdx(scores []uint64) (start, end int) {
 		return 0, 0
 	}
 
-	// Binary search: find first score <= s.Max (scores are sorted descending).
-	lo, hi := 0, len(scores)
-	for lo < hi {
-		mid := lo + (hi-lo)/2
-		if scores[mid] > s.Max {
-			lo = mid + 1
-		} else {
-			hi = mid
-		}
-	}
-	start = lo
+	start = sort.Search(len(scores), func(i int) bool {
+		return scores[i] <= s.Max
+	})
 	if start >= len(scores) {
 		return 0, 0
 	}
 
-	// Binary search from start: find first score < s.Min.
-	lo, hi = start, len(scores)
-	for lo < hi {
-		mid := lo + (hi-lo)/2
-		if scores[mid] > s.Min {
-			lo = mid + 1
-		} else {
-			hi = mid
-		}
-	}
-	end = lo
+	end = start + sort.Search(len(scores)-start, func(i int) bool {
+		return scores[start+i] <= s.Min
+	})
 	return start, end
 }
 
