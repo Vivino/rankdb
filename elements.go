@@ -330,13 +330,14 @@ func (l *Elements) Add(e Element) (*Rank, error) {
 	if e.Updated == 0 {
 		e.Updated = uint32(time.Now().Unix())
 	}
-	_, err := l.FindIdx(e.ID)
-	if err == nil {
-		// element exists, update it
-		return l.Update(e)
+	lst := *l
+	for i, elem := range lst {
+		if elem.ID == e.ID {
+			lst = append(lst[:i], lst[i+1:]...)
+			*l = lst
+			return l.idxRank(l.Insert(e)), nil
+		}
 	}
-
-	// insert a new element
 	return l.idxRank(l.Insert(e)), nil
 }
 
@@ -359,11 +360,15 @@ func (l *Elements) Update(e Element) (*Rank, error) {
 	if e.Updated == 0 {
 		e.Updated = uint32(time.Now().Unix())
 	}
-	err := l.Delete(e.ID)
-	if err != nil {
-		return nil, err
+	lst := *l
+	for i, elem := range lst {
+		if elem.ID == e.ID {
+			lst = append(lst[:i], lst[i+1:]...)
+			*l = lst
+			return l.idxRank(l.Insert(e)), nil
+		}
 	}
-	return l.idxRank(l.Insert(e)), nil
+	return nil, ErrNotFound
 }
 
 // Delete element from list.
