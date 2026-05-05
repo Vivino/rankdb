@@ -333,6 +333,7 @@ func (l *Elements) Add(e Element) (*Rank, error) {
 	lst := *l
 	for i, elem := range lst {
 		if elem.ID == e.ID {
+			// element found - delete the old, insert the new one
 			lst = append(lst[:i], lst[i+1:]...)
 			*l = lst
 			return l.idxRank(l.Insert(e)), nil
