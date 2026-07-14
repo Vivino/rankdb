@@ -192,10 +192,12 @@ func (l Elements) FindIdx(id ElementID) (int, error) {
 
 // FindScoreIdx returns index of first element that matches score.
 func (l Elements) FindScoreIdx(score uint64) (int, error) {
-	for i := range l {
-		if l[i].Score == score {
-			return i, nil
-		}
+	// Find the first element with Score <= score **if any**
+	i := sort.Search(len(l), func(i int) bool {
+		return l[i].Score <= score
+	})
+	if i < len(l) && l[i].Score == score {
+		return i, nil
 	}
 	return 0, ErrNotFound
 }
@@ -204,22 +206,15 @@ func (l Elements) FindScoreIdx(score uint64) (int, error) {
 // Returns index of inserted item.
 func (l *Elements) Insert(e Element) int {
 	lst := *l
-	for i, le := range lst {
-		if le.Above(e) {
-			continue
-		}
-		// Element should be placed at i
-		lst = append(lst, Element{})
-		copy(lst[i+1:], lst[i:])
-		lst[i] = e
-
-		*l = lst
-		return i
-	}
-	// Element should be last.
-	lst = append(lst, e)
+	i := sort.Search(len(lst), func(i int) bool {
+		return !lst[i].aboveP(&e)
+	})
+	// Element should be placed at i
+	lst = append(lst, Element{})
+	copy(lst[i+1:], lst[i:])
+	lst[i] = e
 	*l = lst
-	return len(lst) - 1
+	return i
 }
 
 // Merge other elements into this list.
@@ -335,11 +330,15 @@ func (l *Elements) Add(e Element) (*Rank, error) {
 	if e.Updated == 0 {
 		e.Updated = uint32(time.Now().Unix())
 	}
-	_, err := l.FindIdx(e.ID)
-	if err == nil {
-		return l.Update(e)
+	lst := *l
+	for i, elem := range lst {
+		if elem.ID == e.ID {
+			// element found - delete the old, insert the new one
+			lst = append(lst[:i], lst[i+1:]...)
+			*l = lst
+			return l.idxRank(l.Insert(e)), nil
+		}
 	}
-
 	return l.idxRank(l.Insert(e)), nil
 }
 
@@ -362,11 +361,15 @@ func (l *Elements) Update(e Element) (*Rank, error) {
 	if e.Updated == 0 {
 		e.Updated = uint32(time.Now().Unix())
 	}
-	err := l.Delete(e.ID)
-	if err != nil {
-		return nil, err
+	lst := *l
+	for i, elem := range lst {
+		if elem.ID == e.ID {
+			lst = append(lst[:i], lst[i+1:]...)
+			*l = lst
+			return l.idxRank(l.Insert(e)), nil
+		}
 	}
-	return l.idxRank(l.Insert(e)), nil
+	return nil, ErrNotFound
 }
 
 // Delete element from list.
@@ -436,15 +439,16 @@ func (e Elements) FirstElementsWithScore(scores []uint64) Elements {
 		return nil
 	}
 	res := make(Elements, 0, len(scores))
-	top := scores[0]
-	for i := range e {
-		if e[i].Score <= top {
+	offset := 0
+	for _, score := range scores {
+		sub := e[offset:]
+		i := sort.Search(len(sub), func(i int) bool {
+			return sub[i].Score <= score
+		})
+		i += offset
+		if i < len(e) {
 			res = append(res, e[i])
-			if len(scores) <= 1 {
-				break
-			}
-			scores = scores[1:]
-			top = scores[0]
+			offset = i + 1
 		}
 	}
 	return res

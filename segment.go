@@ -12,6 +12,7 @@ import (
 	"errors"
 	"fmt"
 	"math"
+	"sort"
 	"sync"
 	"time"
 
@@ -106,27 +107,21 @@ func (s *Segment) cacheID() string {
 // FilterIdx returns the indexes of the start and end of the slice of elements
 // that fall within the range of the segment.
 func (s *Segment) FilterIdx(e Elements) (start, end int) {
-	start = -1
-	startE := &Element{Score: s.Max, TieBreaker: s.MaxTie}
-	// Find first element not above startE
-	for i, elem := range e {
-		if !elem.aboveP(startE) {
-			start = i
-			break
-		}
-	}
-	if start == -1 {
+	if len(e) == 0 {
 		return 0, 0
 	}
-	endE := &Element{Score: s.Min, TieBreaker: s.MinTie, Updated: math.MaxUint32}
-	// Find first element that is below endE
-	end = len(e)
-	for i, elem := range e[start:] {
-		if !elem.aboveP(endE) {
-			end = i + start
-			break
-		}
+	startE := &Element{Score: s.Max, TieBreaker: s.MaxTie}
+	start = sort.Search(len(e), func(i int) bool {
+		return !e[i].aboveP(startE)
+	})
+	if start >= len(e) {
+		return 0, 0
 	}
+
+	endE := &Element{Score: s.Min, TieBreaker: s.MinTie, Updated: math.MaxUint32}
+	end = start + sort.Search(len(e)-start, func(i int) bool {
+		return !e[start+i].aboveP(endE)
+	})
 	return start, end
 }
 
@@ -138,26 +133,16 @@ func (s *Segment) FilterScoresIdx(scores []uint64) (start, end int) {
 		return 0, 0
 	}
 
-	start = -1
-	// Find first element not above startE
-	for i, elem := range scores {
-		if elem <= s.Max {
-			start = i
-			break
-		}
-	}
-	if start == -1 {
+	start = sort.Search(len(scores), func(i int) bool {
+		return scores[i] <= s.Max
+	})
+	if start >= len(scores) {
 		return 0, 0
 	}
 
-	// Find first element that is below endE
-	end = len(scores)
-	for i, elem := range scores[start:] {
-		if elem <= s.Min {
-			end = i + start
-			break
-		}
-	}
+	end = start + sort.Search(len(scores)-start, func(i int) bool {
+		return scores[start+i] <= s.Min
+	})
 	return start, end
 }
 
