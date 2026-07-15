@@ -669,7 +669,7 @@ func (s *Segments) topOffsets() (elements []int, total int) {
 // Verify segments without validating elements.
 func (s *Segments) Verify(ctx context.Context, bs blobstore.WithSet) error {
 	if len(s.Segments) == 0 {
-		return fmt.Errorf("No segments found.")
+		return fmt.Errorf("no segments found")
 	}
 	foundSegs := make(map[SegmentID]int, len(s.Segments))
 	for i := range s.Segments {
