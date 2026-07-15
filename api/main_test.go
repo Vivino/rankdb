@@ -10,7 +10,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"math/rand"
 	"net/http"
 	"os"
@@ -85,7 +84,7 @@ func initClient(_ context.Context, dstClient **client.Client, scope string) {
 	}
 
 	// Load private key
-	b, err := ioutil.ReadFile(filepath.Join(config.JwtKeyPath, "jwt.key"))
+	b, err := os.ReadFile(filepath.Join(config.JwtKeyPath, "jwt.key"))
 	exitOnFailure(err)
 	privKey, err := jwtgo.ParseRSAPrivateKeyFromPEM(b)
 	exitOnFailure(err)
@@ -139,7 +138,7 @@ func decodeError(resp *http.Response) error {
 		}
 		return r
 	default:
-		b, _ := ioutil.ReadAll(io.LimitReader(resp.Body, 10*1024))
+		b, _ := io.ReadAll(io.LimitReader(resp.Body, 10*1024))
 		return fmt.Errorf("rankdb api returned: %s (%d): %s", resp.Status, resp.StatusCode, string(b))
 	}
 }
@@ -250,7 +249,7 @@ func customTokenClient(ctx context.Context, t *testing.T, scope string, onlyElem
 	if resp.StatusCode != http.StatusOK {
 		t.Fatal("Unexpected response status:", resp.Status)
 	}
-	b, err := ioutil.ReadAll(resp.Body)
+	b, err := io.ReadAll(resp.Body)
 	if err != nil {
 		t.Fatal(err)
 	}

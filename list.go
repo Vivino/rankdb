@@ -466,9 +466,9 @@ func (l *List) saveSegments(ctx context.Context, bs blobstore.Store, s *segments
 	if !s.readOnly {
 		l.updateSegments(ctx, s)
 	}
-	l.RWMutex.RLock()
+	l.RLock()
 	set := l.Set
-	l.RWMutex.RUnlock()
+	l.RUnlock()
 	store := blobstore.StoreWithSet(bs, set)
 	if s.scores != nil {
 		err := s.scores.Save(ctx, store)

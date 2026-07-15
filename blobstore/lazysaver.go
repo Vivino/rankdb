@@ -393,10 +393,7 @@ func (l *LazySaver) requestHandler() {
 			continue
 		}
 		next := l.cache.Front()
-		for {
-			if next == nil {
-				break
-			}
+		for next != nil {
 			if v := next.Value.(updateItemRequest); !v.saving {
 				nextIn := time.Until(v.seen.Add(l.maxTime))
 				if nextIn <= time.Nanosecond {
@@ -454,7 +451,7 @@ func (l *LazySaver) startSaver(n int) {
 	// Read everything, so we can be lockless.
 	l.mu.RLock()
 	timeout := l.saveTimeout
-	ctxb := log.WithLogger(context.Background(), l.lazySaveOptions.logger)
+	ctxb := log.WithLogger(context.Background(), l.logger)
 	ctxb = log.WithValues(ctxb, "saver_id", n)
 	input := l.savech
 	tokens := l.tokens
@@ -520,7 +517,7 @@ func (l *LazySaver) startSaver(n int) {
 // Shutdown should be called when the server is done writing and
 // the remaining data should be flushed.
 func (l *LazySaver) Shutdown() {
-	log := l.lazySaveOptions.logger
+	log := l.logger
 	l.mu.Lock()
 	if l.shuttingDown {
 		l.mu.Unlock()

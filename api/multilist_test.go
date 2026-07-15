@@ -6,7 +6,6 @@ package api
 
 import (
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -286,7 +285,7 @@ func TestMultilistController_Backup(t *testing.T) {
 	}
 	createList(t, t.Name(), elems)
 	createList(t, t.Name()+"-2", elems)
-	dir, _ := ioutil.TempDir("", t.Name())
+	dir, _ := os.MkdirTemp("", t.Name())
 	fileName := filepath.Join(dir, t.Name()+".bin")
 	payload := client.MultiListBackup{
 		Destination: &client.BackupDestination{
