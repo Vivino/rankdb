@@ -228,7 +228,9 @@ func NewLazySaver(store Store, opts ...lazySaveOption) (*LazySaver, error) {
 		l.stats.LoadedBytes += int64(len(b))
 		l.statsMu.Unlock()
 		if err == ErrBlobNotFound {
-			log.Info(ctx, "Storage returned not found...")
+			if l.verbose {
+				log.Info(ctx, "Storage returned not found...")
+			}
 		}
 		return b, err
 	}
