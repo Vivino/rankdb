@@ -18,7 +18,7 @@ require (
 	github.com/klauspost/shutdown2 v1.1.0
 	github.com/mattn/go-colorable v0.1.13
 	github.com/newrelic/go-agent v1.5.0
-	github.com/sirupsen/logrus v1.9.0
+	github.com/sirupsen/logrus v1.9.1
 	github.com/spf13/cobra v1.7.0
 	github.com/tinylib/msgp v1.1.2
 	github.com/ugorji/go/codec v1.1.7
