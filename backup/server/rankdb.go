@@ -9,7 +9,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 
 	"github.com/Vivino/rankdb/api/client"
@@ -28,7 +27,7 @@ func NewRankDB(ctx context.Context, host string) (*RankDB, error) {
 		return nil, err
 	}
 	if resp.StatusCode != http.StatusOK {
-		return nil, errors.New("Could not reach destination server")
+		return nil, errors.New("could not reach destination server")
 	}
 	return &RankDB{c: c}, nil
 }
@@ -104,7 +103,7 @@ func decodeError(ctx context.Context, resp *http.Response, c *client.Client) err
 		}
 		return r
 	default:
-		b, _ := ioutil.ReadAll(io.LimitReader(resp.Body, 1024))
+		b, _ := io.ReadAll(io.LimitReader(resp.Body, 1024))
 		return fmt.Errorf("destination server api returned: %s (%d): %s", resp.Status, resp.StatusCode, string(b))
 	}
 }

@@ -366,10 +366,10 @@ func (c *MultilistController) Backup(ctx *app.BackupMultilistContext) error {
 		ctx.ResponseData.Header().Set("X-Backup-ID", bi.ID)
 		ctx.ResponseData.Header().Set("Transfer-Encoding", "chunked")
 		ctx.ResponseData.Header().Set("X-Content-Type-Options", "nosniff")
-		ctx.ResponseData.WriteHeader(200)
+		ctx.WriteHeader(200)
 		stream := xfer.Output()
 		defer func() { _ = stream.Close() }()
-		n, err := io.CopyBuffer(ctx.ResponseData.ResponseWriter, stream, make([]byte, 64<<10))
+		n, err := io.CopyBuffer(ctx.ResponseWriter, stream, make([]byte, 64<<10))
 		log.Info(ctx, "Finished sending backup data", "bytes", n, "error", err)
 		return err
 	case "s3":
