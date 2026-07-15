@@ -1,23 +1,22 @@
-FROM golang:1.13-alpine
+FROM golang:1.26-alpine
 
 LABEL maintainer="vivino.com"
 
-ENV GOPATH /go
-ENV CGO_ENABLED 0
-ENV GO111MODULE on
-ENV BASEPACKAGE github.com/Vivino/rankdb
-ENV PACKAGEPATH /go/src/${BASEPACKAGE}/
-ENV GOPROXY https://proxy.golang.org
+ENV CGO_ENABLED=0
+ENV GO111MODULE=on
+ENV GOPROXY=https://proxy.golang.org
 
-WORKDIR ${PACKAGEPATH}
+WORKDIR /src
 
-RUN  \
-     apk add --no-cache git && \
-     go get ${BASEPACKAGE} && \
-     go build -v -o=/go/bin/rankdb ${BASEPACKAGE}/cmd/rankdb && \
-     go build -v -o=/go/bin/rankdb-cli ${BASEPACKAGE}/api/tool/rankdb-cli
+COPY go.mod go.sum ./
+RUN apk add --no-cache git && go mod download
 
-FROM alpine:3.10
+COPY . .
+
+RUN go build -v -o=/go/bin/rankdb ./cmd/rankdb && \
+    go build -v -o=/go/bin/rankdb-cli ./api/tool/rankdb-cli
+
+FROM alpine:3.21
 
 EXPOSE 8080
 
