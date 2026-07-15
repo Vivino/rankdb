@@ -60,13 +60,13 @@ func (w WriterMsgp) ReplaceWriter(writer io.Writer) {
 // Buffer returns the buffer containing the encoded content.
 // The encoder is flushed to buffer.
 func (w WriterMsgp) Buffer() *bytes.Buffer {
-	w.w.Flush()
+	_ = w.w.Flush()
 	return w.b
 }
 
 // Flush the messagepack writer.
 func (w WriterMsgp) Flush() {
-	w.w.Flush()
+	_ = w.w.Flush()
 }
 
 // Call Close to signify you are done with serialization and you no longer

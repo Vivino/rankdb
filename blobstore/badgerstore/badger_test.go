@@ -33,7 +33,7 @@ func TestNew(t *testing.T) {
 	ctx := log.WithLogger(context.Background(), logger)
 	dir := os.TempDir()
 	fn := filepath.Join(dir, randString(10)+"-testdb.badger")
-	defer os.Remove(fn)
+	defer func() { _ = os.Remove(fn) }()
 	m, err := New(badger.DefaultOptions(fn))
 	if err != nil {
 		t.Fatal(err)

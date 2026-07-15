@@ -289,7 +289,11 @@ func newBlobstore(ctx context.Context, s string) (store blobstore.Store, closers
 			return nil, nil, err
 		}
 		store = bs
-		closers = append(closers, func() { bs.Close() })
+		closers = append(closers, func() {
+			if err := bs.Close(); err != nil {
+				log.Error(ctx, "failed to close badger store", "error", err)
+			}
+		})
 	case "BoltDB":
 		bs, err := boltstore.NewBoltStore(config.BoltDB.FilePath, nil)
 		if err != nil {
@@ -299,7 +303,11 @@ func newBlobstore(ctx context.Context, s string) (store blobstore.Store, closers
 		db := bs.DB()
 		db.NoSync = config.BoltDB.NoSync
 		db.NoGrowSync = config.BoltDB.NoGrowSync
-		closers = append(closers, func() { bs.Close() })
+		closers = append(closers, func() {
+			if err := bs.Close(); err != nil {
+				log.Error(ctx, "failed to close bolt store", "error", err)
+			}
+		})
 	case "Memory":
 		store = memstore.NewMemStore()
 	case "Aerospike":

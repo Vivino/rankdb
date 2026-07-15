@@ -26,7 +26,7 @@ func TestGenerateList(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer f.Close()
+	defer func() { _ = f.Close() }()
 	lst := app.RankList{
 		ID:        fmt.Sprintf("list-%d-elements", elements),
 		LoadIndex: false,
@@ -41,7 +41,7 @@ func TestGenerateList(t *testing.T) {
 	}
 	rng := rand.New(rand.NewSource(0x1984))
 	w := bufio.NewWriter(f)
-	defer w.Flush()
+	defer func() { _ = w.Flush() }()
 
 	for i := 0; i < elements; i++ {
 		tb := rng.Uint32()

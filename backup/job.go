@@ -185,14 +185,14 @@ func (req Request) Start(bg context.Context) ID {
 			job.status.Errors["saver"] = err.Error()
 			return
 		}
-		defer dst.Close()
+		defer func() { _ = dst.Close() }()
 		wc.w = dst
 		zw, err := zstd.NewWriter(&wc)
 		if err != nil {
 			job.status.Errors["compress"] = err.Error()
 			return
 		}
-		defer zw.Close()
+		defer func() { _ = zw.Close() }()
 		msg.ReplaceWriter(zw)
 		defer msg.Close()
 		db := job.db

@@ -320,7 +320,7 @@ func TestMultilistController_Backup(t *testing.T) {
 	resp, err = tClientManage.BackupMultilist(ctx, client.BackupMultilistPath(), &payload, contentDefault)
 	fatalErr(t, err)
 	expectCode(t, resp, http.StatusCreated)
-	defer os.RemoveAll(dir)
+	defer func() { _ = os.RemoveAll(dir) }()
 	backup, err := tClient.DecodeRankdbCallback(resp)
 	fatalErr(t, err)
 	var got *client.RankdbBackupStatus

@@ -533,10 +533,7 @@ func (l *List) cloneElements(ctx context.Context, bs blobstore.Store, org *List)
 		dst.elements = ls.elements.Clone(true)
 		ls.unlock()
 		dstIdx.Elements = append(dstIdx.Elements, dst.elements.ElementIDs(dst.seg.ID).Elements...)
-		if err != nil {
-			dst.unlock()
-			return err
-		}
+
 		err = newSegments.scores.replaceSegment(ctx, bsDst, dst)
 		if err != nil {
 			log.Error(ctx, err.Error())
@@ -2018,7 +2015,7 @@ func (l *List) ForceSplit(ctx context.Context, bs blobstore.Store) error {
 // checkSplit will check all segments if they need splitting.
 // If true, a request for splitting will be sent.
 // Segments must be provided.
-func (l *List) checkSplit(ctx context.Context, bs blobstore.Store, segs *segments) {
+func (l *List) checkSplit(ctx context.Context, _ blobstore.Store, segs *segments) {
 	if segs == nil || segs.scores == nil || segs.index == nil {
 		log.Error(ctx, "checkSplit: nil segments")
 		return

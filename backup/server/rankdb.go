@@ -87,14 +87,14 @@ func (b *bodyWriter) Transfer(ctx context.Context) {
 		return
 	}
 	log.Info(ctx, "Destination server returned ok", "full_path", b.req.URL.String())
-	b.r.Close()
-	_, _ = io.Copy(ioutil.Discard, resp.Body)
-	resp.Body.Close()
+	_ = b.r.Close()
+	_, _ = io.Copy(io.Discard, resp.Body)
+	_ = resp.Body.Close()
 }
 
 // decodeError will decode an error response.
 func decodeError(ctx context.Context, resp *http.Response, c *client.Client) error {
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 	switch resp.Header.Get("Content-Type") {
 	case goa.ErrorMediaIdentifier:
 		r, err := c.DecodeErrorResponse(resp)

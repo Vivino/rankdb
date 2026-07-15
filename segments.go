@@ -299,7 +299,7 @@ func (s *Segments) replaceSegment(ctx context.Context, bs blobstore.WithSet, ls 
 
 // newLockedSegment creates a new locked segment with the content of the provided segment.
 // The segment is added to s, but not saved.
-func (s *Segments) newLockedSegment(ctx context.Context, bs blobstore.WithSet, seg *Segment) *lockedSegment {
+func (s *Segments) newLockedSegment(_ context.Context, _ blobstore.WithSet, seg *Segment) *lockedSegment {
 	seg.ID = s.newID()
 	seg.Parent = s.ID
 	seg.Updated = time.Now().Unix()
