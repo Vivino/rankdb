@@ -84,7 +84,7 @@ func (r RankedElements) Offset(offset int) {
 func (r RankedElements) IDs() ElementIDs {
 	res := make(ElementIDs, len(r))
 	for i := range r {
-		res[i] = r[i].Element.ID
+		res[i] = r[i].ID
 	}
 	return res
 }

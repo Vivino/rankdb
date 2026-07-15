@@ -9,8 +9,8 @@ import (
 	"crypto/rsa"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"net/http"
+	"os"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -63,7 +63,7 @@ func LoadJWTPublicKeys() ([]*rsa.PublicKey, error) {
 	}
 	keys := make([]*rsa.PublicKey, len(keyFiles))
 	for i, keyFile := range keyFiles {
-		pem, err := ioutil.ReadFile(keyFile)
+		pem, err := os.ReadFile(keyFile)
 		if err != nil {
 			return nil, err
 		}
@@ -176,7 +176,7 @@ func NewJWTController(service *goa.Service) (*JWTController, error) {
 		}, nil
 	}
 	log.Info(context.Background(), "Warning: JWT Key creation enabled.")
-	b, err := ioutil.ReadFile(filepath.Join(config.JwtKeyPath, "jwt.key"))
+	b, err := os.ReadFile(filepath.Join(config.JwtKeyPath, "jwt.key"))
 	if err != nil {
 		return nil, err
 	}

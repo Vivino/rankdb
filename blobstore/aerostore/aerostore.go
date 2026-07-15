@@ -44,7 +44,7 @@ func New(namespace, keyPrefix, hosts string) (*AeroStore, error) {
 	}
 	cl, err := as.NewClientWithPolicyAndHost(nil, h...)
 	if err != nil {
-		return nil, fmt.Errorf("Aerospike client initialization failed: %s", err)
+		return nil, fmt.Errorf("aerospike client initialization failed: %s", err)
 	}
 	defaultWritePolicy := as.NewWritePolicy(0, 0)
 	defaultWritePolicy.CommitLevel = as.COMMIT_MASTER

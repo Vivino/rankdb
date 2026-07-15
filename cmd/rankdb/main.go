@@ -45,7 +45,9 @@ func main() {
 	conf, err := os.Open(*configPath)
 	exitOnFailure(err)
 	err = api.StartServer(ctx, conf, lr)
-	conf.Close()
+	if closeErr := conf.Close(); closeErr != nil && err == nil {
+		err = closeErr
+	}
 	exitOnFailure(err)
 
 	shutdown.OnSignal(0, syscall.SIGTERM, syscall.SIGINT)

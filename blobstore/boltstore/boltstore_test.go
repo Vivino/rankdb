@@ -32,7 +32,7 @@ func TestNewBoltStore(t *testing.T) {
 	ctx := log.WithLogger(context.Background(), logger)
 	dir := os.TempDir()
 	fn := filepath.Join(dir, randString(10)+"-testdb.bolt")
-	defer os.Remove(fn)
+	defer func() { _ = os.Remove(fn) }()
 	m, err := NewBoltStore(fn, nil)
 	if err != nil {
 		t.Fatal(err)

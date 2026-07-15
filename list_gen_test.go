@@ -74,7 +74,7 @@ func TestEncodeDecodeList(t *testing.T) {
 
 	m := v.Msgsize()
 	if buf.Len() > m {
-		t.Logf("WARNING: Msgsize() for %v is inaccurate", v)
+		t.Logf("WARNING: Msgsize() for %v is inaccurate", &v)
 	}
 
 	vn := List{}

@@ -103,7 +103,7 @@ func (l Lists) Save(ctx context.Context, w io.Writer) error {
 			return err
 		}
 		wm.ReplaceWriter(enc)
-		defer enc.Close()
+		defer func() { _ = enc.Close() }()
 	}
 	_, err := wc.Write([]byte{c})
 	if err != nil {
@@ -125,8 +125,8 @@ func (l Lists) Save(ctx context.Context, w io.Writer) error {
 			return true
 		}
 		n++
-		list.RWMutex.RLock()
-		defer list.RWMutex.RUnlock()
+		list.RLock()
+		defer list.RUnlock()
 		err = list.EncodeMsg(msg)
 		return err == nil
 	})
@@ -168,9 +168,9 @@ func (l *Lists) Load(ctx context.Context, bs blobstore.Store, b []byte) error {
 	} else {
 		// Fall back... can be removed when we have converted.
 		dec := flate.NewReader(bytes.NewBuffer(b))
-		defer dec.Close()
+		defer func() { _ = dec.Close() }()
 		ra := readahead.NewReader(dec)
-		defer ra.Close()
+		defer func() { _ = ra.Close() }()
 		rm = NewReaderMsgpReader(ra)
 	}
 	if rm == nil {
@@ -252,9 +252,9 @@ func (l *Lists) Prune(ctx context.Context) error {
 			log.Error(ctx, "Wrong list type:", "type", fmt.Sprintf("%T", value))
 			return true
 		}
-		list.RWMutex.RLock()
+		list.RLock()
 		li := list.LoadIndex
-		list.RWMutex.RUnlock()
+		list.RUnlock()
 		// If LoadIndex is specified we only prune elements.
 		if !li {
 			list.ReleaseSegments(ctx)

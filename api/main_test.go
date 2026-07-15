@@ -10,7 +10,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"math/rand"
 	"net/http"
 	"os"
@@ -76,7 +75,7 @@ func TestMain(m *testing.M) {
 	shutdown.Exit(m.Run())
 }
 
-func initClient(ctx context.Context, dstClient **client.Client, scope string) {
+func initClient(_ context.Context, dstClient **client.Client, scope string) {
 	cl := client.New(goaclient.HTTPClientDoer(http.DefaultClient))
 	*dstClient = cl
 	cl.Host = listenAddr.String()
@@ -85,7 +84,7 @@ func initClient(ctx context.Context, dstClient **client.Client, scope string) {
 	}
 
 	// Load private key
-	b, err := ioutil.ReadFile(filepath.Join(config.JwtKeyPath, "jwt.key"))
+	b, err := os.ReadFile(filepath.Join(config.JwtKeyPath, "jwt.key"))
 	exitOnFailure(err)
 	privKey, err := jwtgo.ParseRSAPrivateKeyFromPEM(b)
 	exitOnFailure(err)
@@ -130,7 +129,7 @@ func fatalErr(t *testing.T, err error) {
 
 // decodeError will decode an error response.
 func decodeError(resp *http.Response) error {
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 	switch resp.Header.Get("Content-Type") {
 	case goa.ErrorMediaIdentifier:
 		r, err := tClient.DecodeErrorResponse(resp)
@@ -139,7 +138,7 @@ func decodeError(resp *http.Response) error {
 		}
 		return r
 	default:
-		b, _ := ioutil.ReadAll(io.LimitReader(resp.Body, 10*1024))
+		b, _ := io.ReadAll(io.LimitReader(resp.Body, 10*1024))
 		return fmt.Errorf("rankdb api returned: %s (%d): %s", resp.Status, resp.StatusCode, string(b))
 	}
 }
@@ -151,8 +150,8 @@ func expectCode(t *testing.T, resp *http.Response, want int) func() {
 	}
 	return func() {
 		if resp.Body != nil {
-			_, _ = io.Copy(ioutil.Discard, resp.Body)
-			resp.Body.Close()
+			_, _ = io.Copy(io.Discard, resp.Body)
+			_ = resp.Body.Close()
 		}
 	}
 }
@@ -250,7 +249,7 @@ func customTokenClient(ctx context.Context, t *testing.T, scope string, onlyElem
 	if resp.StatusCode != http.StatusOK {
 		t.Fatal("Unexpected response status:", resp.Status)
 	}
-	b, err := ioutil.ReadAll(resp.Body)
+	b, err := io.ReadAll(resp.Body)
 	if err != nil {
 		t.Fatal(err)
 	}

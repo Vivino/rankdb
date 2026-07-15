@@ -9,7 +9,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"os"
@@ -367,10 +366,10 @@ func (c *MultilistController) Backup(ctx *app.BackupMultilistContext) error {
 		ctx.ResponseData.Header().Set("X-Backup-ID", bi.ID)
 		ctx.ResponseData.Header().Set("Transfer-Encoding", "chunked")
 		ctx.ResponseData.Header().Set("X-Content-Type-Options", "nosniff")
-		ctx.ResponseData.WriteHeader(200)
+		ctx.WriteHeader(200)
 		stream := xfer.Output()
-		defer stream.Close()
-		n, err := io.CopyBuffer(ctx.ResponseData.ResponseWriter, stream, make([]byte, 64<<10))
+		defer func() { _ = stream.Close() }()
+		n, err := io.CopyBuffer(ctx.ResponseWriter, stream, make([]byte, 64<<10))
 		log.Info(ctx, "Finished sending backup data", "bytes", n, "error", err)
 		return err
 	case "s3":
@@ -414,7 +413,7 @@ func (c *MultilistController) Restore(ctx *app.RestoreMultilistContext) error {
 		return err
 	}
 	defer done()
-	defer ctx.Body.Close()
+	defer func() { _ = ctx.Body.Close() }()
 
 	info := backup.RestoreInfo{
 		Source:  backup.WrapReader{ReadCloser: ctx.Body},
@@ -429,8 +428,8 @@ func (c *MultilistController) Restore(ctx *app.RestoreMultilistContext) error {
 		info.ListIDSuffix = *ctx.ListIDSuffix
 	}
 	if ctx.Src != "" {
-		_, _ = io.Copy(ioutil.Discard, ctx.Body)
-		ctx.Body.Close()
+		_, _ = io.Copy(io.Discard, ctx.Body)
+		_ = ctx.Body.Close()
 		switch {
 		case strings.HasPrefix(ctx.Src, "s3://"):
 			if awsSession == nil {
@@ -446,8 +445,8 @@ func (c *MultilistController) Restore(ctx *app.RestoreMultilistContext) error {
 		}
 	}
 	if ctx.SrcFile != "" {
-		_, _ = io.Copy(ioutil.Discard, ctx.Body)
-		ctx.Body.Close()
+		_, _ = io.Copy(io.Discard, ctx.Body)
+		_ = ctx.Body.Close()
 		f, err := os.Open(ctx.SrcFile)
 		if err != nil {
 			log.Error(ctx, "Error opening file data", "error", err)

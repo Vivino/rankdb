@@ -195,15 +195,16 @@ func NewJWT(validationKeys interface{}, validationFunc goa.Middleware, scheme *g
 				err           error
 			)
 
-			if scheme.In == goa.LocHeader {
+			switch scheme.In {
+			case goa.LocHeader:
 				if incomingToken, err = extractTokenFromHeader(scheme.Name, req); err != nil {
 					return err
 				}
-			} else if scheme.In == goa.LocQuery {
+			case goa.LocQuery:
 				if incomingToken, err = extractTokenFromQueryParam(scheme.Name, req); err != nil {
 					return err
 				}
-			} else {
+			default:
 				return fmt.Errorf("whoops, security scheme with location (in) %q not supported", scheme.In)
 			}
 

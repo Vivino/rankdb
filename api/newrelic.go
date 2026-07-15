@@ -176,14 +176,14 @@ func formatMsg(msg string, keyvals []interface{}, iserror bool) string {
 	if iserror {
 		lvl = "EROR" // Not a typo. It ensures all level strings are 4-chars long.
 	}
-	fm.WriteString(fmt.Sprintf("[%s] %s", lvl, msg))
+	fmt.Fprintf(&fm, "[%s] %s", lvl, msg)
 	vals := make([]interface{}, n)
 	offset := 0
 	for i := 0; i < len(keyvals); i += 2 {
 		k := keyvals[i]
 		v := keyvals[i+1]
 		vals[i/2+offset/2] = v
-		fm.WriteString(fmt.Sprintf(" %s=%%+v", k))
+		fmt.Fprintf(&fm, " %s=%%+v", k)
 	}
 	return fmt.Sprintf(fm.String(), vals...)
 }

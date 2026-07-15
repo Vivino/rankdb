@@ -1,4 +1,4 @@
-//nolint
+// nolint
 // Package bstest supplies helpers to test blobstores.
 package bstest
 
@@ -183,13 +183,13 @@ func (t Test) Concurrent(ctx context.Context, tt *testing.T) {
 		}
 		if !bytes.Equal(v, b) {
 			tt.Log(cmp.Diff(v, b))
-			return fmt.Sprintf("stored object was not returned correctly (initial store)")
+			return "stored object was not returned correctly (initial store)"
 		}
 		// Modify original slice
 		copy(b, b[blobSize/2:])
 		gotH := md5.Sum(v)
 		if !bytes.Equal(gotH[:], hashOrg[:]) {
-			return fmt.Sprintf("stored object was had not broken reference to input")
+			return "stored object was had not broken reference to input"
 		}
 
 		hashOrg = md5.Sum(b)
@@ -206,7 +206,7 @@ func (t Test) Concurrent(ctx context.Context, tt *testing.T) {
 		}
 		if !bytes.Equal(v, b) {
 			tt.Log(cmp.Diff(v, b))
-			return fmt.Sprintf("compare: stored object was not returned correctly")
+			return "compare: stored object was not returned correctly"
 		}
 
 		// Delete it

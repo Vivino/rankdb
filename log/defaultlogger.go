@@ -60,20 +60,20 @@ func (a *adapter) logit(msg string, keyvals []interface{}, iserror bool) {
 	if iserror {
 		lvl = "EROR" // Not a typo. It ensures all level strings are 4-chars long.
 	}
-	fm.WriteString(fmt.Sprintf("[%s] %s", lvl, msg))
+	fmt.Fprintf(&fm, "[%s] %s", lvl, msg)
 	vals := make([]interface{}, n)
 	offset := len(a.keyvals)
 	for i := 0; i < offset; i += 2 {
 		k := a.keyvals[i]
 		v := a.keyvals[i+1]
 		vals[i/2] = v
-		fm.WriteString(fmt.Sprintf(" %s=%%+v", k))
+		fmt.Fprintf(&fm, " %s=%%+v", k)
 	}
 	for i := 0; i < len(keyvals); i += 2 {
 		k := keyvals[i]
 		v := keyvals[i+1]
 		vals[i/2+offset/2] = v
-		fm.WriteString(fmt.Sprintf(" %s=%%+v", k))
+		fmt.Fprintf(&fm, " %s=%%+v", k)
 	}
-	a.Logger.Printf(fm.String(), vals...)
+	a.Printf(fm.String(), vals...)
 }

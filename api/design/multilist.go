@@ -8,8 +8,8 @@ import (
 	"encoding/json"
 
 	"github.com/Vivino/rankdb"
-	. "github.com/goadesign/goa/design"
-	. "github.com/goadesign/goa/design/apidsl"
+	. "github.com/goadesign/goa/design"         //nolint:staticcheck // ST1001: Goa DSL requires dot imports
+	. "github.com/goadesign/goa/design/apidsl" //nolint:staticcheck // ST1001: Goa DSL requires dot imports
 )
 
 var _ = Resource("multilist", func() {

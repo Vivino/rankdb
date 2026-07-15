@@ -44,7 +44,7 @@ func (ri *RestoreInfo) Restore(ctx context.Context) (*RestoreResult, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer r.Close()
+	defer func() { _ = r.Close() }()
 	zr, err := zstd.NewReader(r)
 	if err != nil {
 		return nil, err

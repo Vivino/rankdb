@@ -5,7 +5,6 @@ package api
 // See LICENSE file for license details
 
 import (
-	"io/ioutil"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -26,7 +25,7 @@ func TestBackupController_Status(t *testing.T) {
 	}
 	createList(t, t.Name(), elems)
 	createList(t, t.Name()+"-2", elems)
-	dir, _ := ioutil.TempDir("", t.Name())
+	dir, _ := os.MkdirTemp("", t.Name())
 	fileName := filepath.Join(dir, t.Name()+".bin")
 	payload := client.MultiListBackup{
 		Destination: &client.BackupDestination{
@@ -45,7 +44,7 @@ func TestBackupController_Status(t *testing.T) {
 	resp, err := tClientManage.BackupMultilist(ctx, client.BackupMultilistPath(), &payload, contentDefault)
 	fatalErr(t, err)
 	expectCode(t, resp, http.StatusCreated)
-	defer os.RemoveAll(dir)
+	defer func() { _ = os.RemoveAll(dir) }()
 	backup, err := tClient.DecodeRankdbCallback(resp)
 	fatalErr(t, err)
 	var got *client.RankdbBackupStatus
@@ -107,7 +106,7 @@ func TestBackupController_Delete(t *testing.T) {
 	}
 	createList(t, t.Name(), elems)
 	createList(t, t.Name()+"-2", elems)
-	dir, _ := ioutil.TempDir("", t.Name())
+	dir, _ := os.MkdirTemp("", t.Name())
 	fileName := filepath.Join(dir, t.Name()+".bin")
 	payload := client.MultiListBackup{
 		Destination: &client.BackupDestination{
@@ -126,7 +125,7 @@ func TestBackupController_Delete(t *testing.T) {
 	resp, err := tClientManage.BackupMultilist(ctx, client.BackupMultilistPath(), &payload, contentDefault)
 	fatalErr(t, err)
 	expectCode(t, resp, http.StatusCreated)
-	defer os.RemoveAll(dir)
+	defer func() { _ = os.RemoveAll(dir) }()
 	backup, err := tClient.DecodeRankdbCallback(resp)
 	fatalErr(t, err)
 	var got *client.RankdbBackupStatus

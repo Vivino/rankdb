@@ -299,7 +299,7 @@ func (s *Segments) replaceSegment(ctx context.Context, bs blobstore.WithSet, ls 
 
 // newLockedSegment creates a new locked segment with the content of the provided segment.
 // The segment is added to s, but not saved.
-func (s *Segments) newLockedSegment(ctx context.Context, bs blobstore.WithSet, seg *Segment) *lockedSegment {
+func (s *Segments) newLockedSegment(_ context.Context, _ blobstore.WithSet, seg *Segment) *lockedSegment {
 	seg.ID = s.newID()
 	seg.Parent = s.ID
 	seg.Updated = time.Now().Unix()
@@ -669,7 +669,7 @@ func (s *Segments) topOffsets() (elements []int, total int) {
 // Verify segments without validating elements.
 func (s *Segments) Verify(ctx context.Context, bs blobstore.WithSet) error {
 	if len(s.Segments) == 0 {
-		return fmt.Errorf("No segments found.")
+		return fmt.Errorf("no segments found")
 	}
 	foundSegs := make(map[SegmentID]int, len(s.Segments))
 	for i := range s.Segments {
