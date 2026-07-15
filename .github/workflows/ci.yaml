@@ -36,6 +36,7 @@ jobs:
           go test -cpu=4 -short -race ./...
 
   go-releaser-check:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     needs: build
     runs-on: ubuntu-latest
     steps:
