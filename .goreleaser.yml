@@ -35,9 +35,7 @@ builds:
       - "7"
 
 archives:
-  - replacements:
-      linux: Linux
-      amd64: x86_64
+  - name_template: "{{ .ProjectName }}_{{ .Version }}_{{ title .Os }}_{{ if eq .Arch \"amd64\" }}x86_64{{ else }}{{ .Arch }}{{ end }}"
     files:
       - conf/conf.stub.toml
       - api/swagger/swagger.json
@@ -49,7 +47,7 @@ archives:
 checksum:
   name_template: "checksums.txt"
 snapshot:
-  version_template: "{{ .Tag }}-next"
+  version_template: "{{ .Version }}-next"
 changelog:
   sort: asc
   filters:
