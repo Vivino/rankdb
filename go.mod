@@ -13,7 +13,7 @@ require (
 	github.com/google/go-cmp v0.7.0
 	github.com/goreleaser/goreleaser v1.2.5
 	github.com/hashicorp/golang-lru v0.5.4
-	github.com/klauspost/compress v1.16.5
+	github.com/klauspost/compress v1.18.7
 	github.com/klauspost/readahead v1.3.1
 	github.com/klauspost/shutdown2 v1.1.0
 	github.com/mattn/go-colorable v0.1.13
